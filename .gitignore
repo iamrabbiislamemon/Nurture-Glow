@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Secrets
+.dev_jwt_secret
+
+# Logs
+*.log
+logs/
+tmp-log.txt
+
+# Backups
+backups/
+
+# Uploads (user-generated content)
+uploads/
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.local
