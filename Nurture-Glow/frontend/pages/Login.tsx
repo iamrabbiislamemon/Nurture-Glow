@@ -259,7 +259,7 @@ const Login: React.FC = () => {
 
     try {
       // Call backend API for password reset
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com/'}/api/auth/forgot-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com'}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: sanitizeInput(forgotEmail.trim()) })
