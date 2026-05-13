@@ -555,8 +555,7 @@ const ProfilePage: React.FC = () => {
       setRequestNote('');
     }}
   />
-)}
-          hasMarriageCert={docs.some(d => d.type === 'MARRIAGE_CERT' || d.document_type === 'MARRIAGE_CERT')}
+      hasMarriageCert={docs.some(d => d.type === 'MARRIAGE_CERT' || d.document_type === 'MARRIAGE_CERT')}
           hasNID={docs.some(d => d.type === 'NID' || d.document_type === 'NID')}
         />
       )}
