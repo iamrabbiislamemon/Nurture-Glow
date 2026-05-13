@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export const API_BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000';
+export const API_BASE = import.meta.env?.VITE_API_URL || 'https://nurture-glow-4.onrender.com';
 
 export const COLORS = {
   softGold: '#E6C77A',
