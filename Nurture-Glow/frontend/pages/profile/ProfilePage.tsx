@@ -554,12 +554,14 @@ const ProfilePage: React.FC = () => {
       setShowVerificationModal(false);
       setRequestNote('');
     }}
+    hasMarriageCert={docs.some(
+      d => d.type === 'MARRIAGE_CERT' || d.document_type === 'MARRIAGE_CERT'
+    )}
+    hasNID={docs.some(
+      d => d.type === 'NID' || d.document_type === 'NID'
+    )}
   />
-      hasMarriageCert={docs.some(d => d.type === 'MARRIAGE_CERT' || d.document_type === 'MARRIAGE_CERT')}
-          hasNID={docs.some(d => d.type === 'NID' || d.document_type === 'NID')}
-        />
-      )}
-
+)}
       {rejectingRequest && (
         <RejectReasonModal
           onChangeReason={setRejectReason}
