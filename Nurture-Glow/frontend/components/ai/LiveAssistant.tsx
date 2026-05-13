@@ -40,7 +40,7 @@ export const LiveAssistant: React.FC<{ onClose: () => void }> = ({ onClose }) =>
   };
 
   const getAuthToken = (): string | null => localStorage.getItem('ng_auth_token');
-  const getApiUrl = (): string => (import.meta.env.VITE_API_URL as string) || 'https://nurture-glow-4.onrender.com/';
+  const getApiUrl = (): string => (import.meta.env.VITE_API_URL as string) || 'https://nurture-glow-4.onrender.com';
 
   const startRecording = useCallback(async () => {
     setErrorMessage(null);
