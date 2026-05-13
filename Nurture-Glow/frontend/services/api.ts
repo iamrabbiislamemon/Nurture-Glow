@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com/';
 const PHP_API_BASE = import.meta.env.VITE_PHP_API_URL || API_BASE;
 
 const TOKEN_KEY = 'ng_auth_token';
