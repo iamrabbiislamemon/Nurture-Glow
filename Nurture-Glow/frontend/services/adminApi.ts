@@ -49,7 +49,7 @@ async function fetchBlob(path: string): Promise<Blob> {
   // For blob downloads we still need raw fetch for the blob() call,
   // but we reuse the same auth token logic.
   const TOKEN_KEY = 'ng_auth_token';
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+  const API_BASE = import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com/';
   const token = localStorage.getItem(TOKEN_KEY);
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
