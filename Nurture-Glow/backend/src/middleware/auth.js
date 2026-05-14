@@ -41,11 +41,12 @@ export function createAuthMiddleware(JWT_SECRET) {
     }
     try {
       const payload = jwt.verify(token, JWT_SECRET);
+      // Ensure payload is an object and normalize role when present
       const userPayload = typeof payload === 'object' && payload !== null ? payload : { sub: String(payload) };
       if (userPayload && userPayload.role) {
         userPayload.role = normalizeRoleValue(userPayload.role) || userPayload.role;
       }
-      req.user = userpayload;
+      req.user = userPayload;
       return next();
     } catch (err) {
       console.error('Auth token verification error:', err);
