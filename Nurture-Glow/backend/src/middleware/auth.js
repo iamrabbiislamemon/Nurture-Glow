@@ -35,18 +35,20 @@ export function createAuthMiddleware(JWT_SECRET) {
    */
   function requireAuth(req, res, next) {
     const header = req.headers.authorization || '';
-    const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+    const token = header && header.startsWith('Bearer ') ? header.slice(7) : null;
     if (!token) {
       return res.status(401).json({ error: 'Missing token' });
     }
     try {
       const payload = jwt.verify(token, JWT_SECRET);
-      if (payload && payload.role) {
-        payload.role = normalizeRoleValue(payload.role) || payload.role;
+      const userPayload = typeof payload === 'object' && payload !== null ? payload : { sub: String(payload) };
+      if (userPayload && userPayload.role) {
+        userPayload.role = normalizeRoleValue(userPayload.role) || userPayload.role;
       }
-      req.user = payload;
-      next();
+      req.user = userpayload;
+      return next();
     } catch (err) {
+      console.error('Auth token verification error:', err);
       return res.status(401).json({ error: 'Invalid token' });
     }
   }
