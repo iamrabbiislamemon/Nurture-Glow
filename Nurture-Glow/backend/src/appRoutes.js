@@ -3294,18 +3294,36 @@ export function createAppRouter({
         return res.status(401).json({ error: 'Authentication required' });
       }
 
+      const queryOrEmpty = async (sql, params = [], label = 'doctor_dashboard_query') => {
+        try {
+          return await query(sql, params);
+        } catch (error) {
+          console.error(`Doctor dashboard query failed (${label}):`, error);
+          return [];
+        }
+      };
+
       // Auto-create doctor catalog entry if it doesn't exist yet
       const doctorCatalogId = await ensureDoctorCatalogEntry(userId) || userId;
 
-      const [profileRows, userRows, userProfileRows, doctorRows] = await Promise.all([
-        query(`SELECT data FROM app_entities WHERE type = 'user_profile' AND user_id = ? LIMIT 1`, [userId]),
-        query(`SELECT phone, email FROM users WHERE id = ? LIMIT 1`, [userId]),
-        query(`SELECT full_name, date_of_birth FROM user_profiles WHERE user_id = ? LIMIT 1`, [userId]),
-        query(
-          `SELECT full_name, specialty_id, phone, email, fee_amount, verified, rating FROM doctors WHERE user_id = ? LIMIT 1`,
-          [userId]
-        )
+      const [profileRows, userRows, userProfileRows] = await Promise.all([
+        queryOrEmpty(`SELECT data FROM app_entities WHERE type = 'user_profile' AND user_id = ? LIMIT 1`, [userId], 'user_profile'),
+        queryOrEmpty(`SELECT phone, email FROM users WHERE id = ? LIMIT 1`, [userId], 'users'),
+        queryOrEmpty(`SELECT full_name, date_of_birth FROM user_profiles WHERE user_id = ? LIMIT 1`, [userId], 'user_profiles')
       ]);
+
+      let doctorRows = await queryOrEmpty(
+        `SELECT full_name, specialty_id, phone, email, fee_amount, verified, rating FROM doctors WHERE user_id = ? LIMIT 1`,
+        [userId],
+        'doctors_with_specialty_id'
+      );
+      if (!doctorRows.length) {
+        doctorRows = await queryOrEmpty(
+          `SELECT full_name, phone, email, fee_amount, verified, rating FROM doctors WHERE user_id = ? LIMIT 1`,
+          [userId],
+          'doctors_without_specialty_id'
+        );
+      }
 
       const profileData = profileRows.length > 0 ? parseJson(profileRows[0].data, {}) : {};
       const userRow = userRows.length > 0 ? userRows[0] : {};
@@ -3314,9 +3332,10 @@ export function createAppRouter({
 
       let specialtyName = null;
       if (doctorRow.specialty_id) {
-        const specialtyRows = await query(
+        const specialtyRows = await queryOrEmpty(
           `SELECT name FROM doctor_specialties WHERE id = ? LIMIT 1`,
-          [doctorRow.specialty_id]
+          [doctorRow.specialty_id],
+          'doctor_specialties'
         );
         specialtyName = specialtyRows.length > 0 ? specialtyRows[0].name : null;
       }
@@ -3363,8 +3382,11 @@ export function createAppRouter({
         totalConsultations: 0
       };
 
-      const appointmentRows = await query(
+      const appointmentRows = await queryOrEmpty(
         `SELECT id, user_id, data, created_at FROM app_entities WHERE type = 'appointment' ORDER BY created_at DESC`
+        ,
+        [],
+        'appointments'
       );
 
       const appointments = appointmentRows
@@ -3506,9 +3528,10 @@ export function createAppRouter({
         earningsHistory
       };
 
-      const scheduleRows = await query(
+      const scheduleRows = await queryOrEmpty(
         `SELECT data FROM app_entities WHERE type = 'doctor_schedule' AND user_id = ? LIMIT 1`,
-        [userId]
+        [userId],
+        'doctor_schedule'
       );
 
       let schedule = [];
@@ -3517,9 +3540,10 @@ export function createAppRouter({
         schedule = normalizeScheduleItems(scheduleData.schedule || scheduleData.items || scheduleData);
       }
 
-      const notificationRows = await query(
+      const notificationRows = await queryOrEmpty(
         `SELECT id, data, created_at FROM app_entities WHERE type = 'notification' AND user_id = ? ORDER BY created_at DESC LIMIT 10`,
-        [userId]
+        [userId],
+        'notifications'
       );
       const notifications = notificationRows.map((row) => {
         const data = parseJson(row.data, {});
@@ -3546,7 +3570,7 @@ export function createAppRouter({
       });
     } catch (err) {
       console.error('Doctor dashboard error:', err);
-      next(err);
+      return res.status(500).json({ error: 'Failed to load doctor dashboard' });
     }
   });
 
