@@ -3288,7 +3288,11 @@ export function createAppRouter({
   // Get doctor dashboard overview
   router.get('/doctor/dashboard', requireAuth, requireRole('doctor'), async (req, res, next) => {
     try {
-      const userId = req.user.sub;
+      const userId = req.user?.sub;
+      if (!userId) {
+        console.error('Doctor dashboard: missing authenticated user (req.user undefined)');
+        return res.status(401).json({ error: 'Authentication required' });
+      }
 
       // Auto-create doctor catalog entry if it doesn't exist yet
       const doctorCatalogId = await ensureDoctorCatalogEntry(userId) || userId;
@@ -3541,6 +3545,7 @@ export function createAppRouter({
         notifications
       });
     } catch (err) {
+      console.error('Doctor dashboard error:', err);
       next(err);
     }
   });
