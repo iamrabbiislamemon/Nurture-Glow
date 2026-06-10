@@ -14,17 +14,18 @@ const About: React.FC = () => {
 
   return (
     <SmoothScrollProvider>
-      <div className="min-h-screen bg-[#F7F5EF]">
+      <div className="min-h-screen bg-gradient-to-b from-yellow-50 via-amber-50 to-white">
         <Navbar />
         <main className="pt-24">
           {/* Hero Section */}
           <section className="py-20 px-6">
             <div className="max-w-4xl mx-auto text-center">
               <Reveal>
-                <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-6">{t('about.title')}</h1>
+                <span className="inline-block px-4 py-2 bg-yellow-200 text-yellow-900 font-bold text-xs uppercase tracking-[0.2em] mb-6 rounded-full shadow-sm">Our Story</span>
+                <h1 className="text-5xl md:text-7xl font-display font-bold text-gray-900 mb-6 tracking-tight leading-[1.1]">{t('about.title')}</h1>
               </Reveal>
               <Reveal delay={0.2}>
-                <p className="text-xl text-gray-600 leading-relaxed italic">"{t('about.subtitle')}"</p>
+                <p className="text-xl text-gray-600 leading-relaxed italic font-sans">"{t('about.subtitle')}"</p>
               </Reveal>
             </div>
           </section>
@@ -39,39 +40,40 @@ const About: React.FC = () => {
                     alt="Healthcare Professional" 
                     className="rounded-[48px] shadow-2xl aspect-[4/5]"
                   />
-                  <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#BFE6DA] rounded-full -z-10"></div>
+                  <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-amber-200/60 rounded-full -z-10"></div>
+                  <div className="absolute -top-6 -left-6 w-24 h-24 bg-emerald-100/80 rounded-full -z-10"></div>
                 </div>
               </Reveal>
               
               <div className="space-y-8">
                 <Reveal>
-                  <h2 className="text-4xl font-serif font-bold text-gray-900">{t('about.storyTitle')}</h2>
+                  <h2 className="text-4xl font-display font-bold text-gray-900 leading-[1.15] tracking-tight">{t('about.storyTitle')}</h2>
                 </Reveal>
                 <Reveal delay={0.2}>
-                  <p className="text-lg text-gray-500 leading-relaxed">{t('about.storyBody')}</p>
+                  <p className="text-lg text-gray-600 leading-relaxed font-sans">{t('about.storyBody')}</p>
                 </Reveal>
                 
                 <Stagger staggerDelay={0.1}>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                     <StaggerItem>
-                      <div className="p-6 bg-[#F7F5EF] rounded-3xl h-full">
-                        <Target className="text-[#D4B56A] mb-4" size={32} />
-                        <h4 className="font-bold mb-2">{t('about.mission')}</h4>
-                        <p className="text-xs text-gray-400">{t('about.missionDesc')}</p>
+                      <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 border border-amber-100 rounded-3xl h-full">
+                        <Target className="text-amber-600 mb-4" size={32} />
+                        <h4 className="font-bold mb-2 font-display text-gray-900">{t('about.mission')}</h4>
+                        <p className="text-xs text-gray-500 leading-relaxed font-sans">{t('about.missionDesc')}</p>
                       </div>
                     </StaggerItem>
                     <StaggerItem>
-                      <div className="p-6 bg-[#F7F5EF] rounded-3xl h-full">
-                        <Eye className="text-[#D4B56A] mb-4" size={32} />
-                        <h4 className="font-bold mb-2">{t('about.vision')}</h4>
-                        <p className="text-xs text-gray-400">{t('about.visionDesc')}</p>
+                      <div className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100 rounded-3xl h-full">
+                        <Eye className="text-emerald-700 mb-4" size={32} />
+                        <h4 className="font-bold mb-2 font-display text-gray-900">{t('about.vision')}</h4>
+                        <p className="text-xs text-gray-500 leading-relaxed font-sans">{t('about.visionDesc')}</p>
                       </div>
                     </StaggerItem>
                     <StaggerItem>
-                      <div className="p-6 bg-[#F7F5EF] rounded-3xl h-full">
-                        <Heart className="text-[#D4B56A] mb-4" size={32} />
-                        <h4 className="font-bold mb-2">{t('about.values')}</h4>
-                        <p className="text-xs text-gray-400">{t('about.valuesDesc')}</p>
+                      <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 border border-amber-100 rounded-3xl h-full">
+                        <Heart className="text-amber-600 mb-4" size={32} />
+                        <h4 className="font-bold mb-2 font-display text-gray-900">{t('about.values')}</h4>
+                        <p className="text-xs text-gray-500 leading-relaxed font-sans">{t('about.valuesDesc')}</p>
                       </div>
                     </StaggerItem>
                   </div>
@@ -81,17 +83,18 @@ const About: React.FC = () => {
           </section>
 
           {/* Safety & Trust */}
-          <section className="py-24 px-6">
+          <section className="py-24 px-6 bg-gradient-to-b from-amber-50 to-white">
             <Reveal y={40}>
-              <div className="max-w-3xl mx-auto bg-white p-12 rounded-[48px] shadow-sm border border-gray-100 text-center">
-                <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
+              <div className="max-w-3xl mx-auto bg-white p-12 rounded-[48px] shadow-lg border border-amber-100 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-green-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-8 shadow-md">
                   <ShieldCheck size={40} />
                 </div>
-                <h2 className="text-3xl font-serif font-bold text-gray-900 mb-6">{t('about.safetyTitle')}</h2>
-                <p className="text-gray-500 leading-relaxed mb-10">{t('about.safetyBody')}</p>
+                <span className="inline-block px-4 py-2 bg-yellow-200 text-yellow-900 font-bold text-xs uppercase tracking-[0.2em] mb-6 rounded-full shadow-sm">Trusted & Secure</span>
+                <h2 className="text-3xl font-display font-bold text-gray-900 mb-6 tracking-tight">{t('about.safetyTitle')}</h2>
+                <p className="text-gray-600 leading-relaxed mb-10 font-sans">{t('about.safetyBody')}</p>
                 <Link 
                   to="/register"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-[#E6C77A] text-white rounded-full font-bold shadow-lg shadow-[#E6C77A]/20 hover:scale-105 transition-all"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all uppercase tracking-wider text-sm"
                 >
                   Join Our Community
                   <ArrowRight size={18} />

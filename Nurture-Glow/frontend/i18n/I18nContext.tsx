@@ -7,6 +7,7 @@ interface I18nContextType {
   locale: Language;
   setLocale: (lang: Language) => void;
   t: (keyPath: string, variables?: Record<string, string>) => string;
+  formatNumber: (num: string | number) => string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -28,6 +29,12 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     document.body.setAttribute('lang', locale);
   }, [locale]);
 
+  const formatNumber = (num: string | number): string => {
+    if (locale !== 'bn') return String(num);
+    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return String(num).replace(/\d/g, (digit) => banglaDigits[parseInt(digit)]);
+  };
+
   const t = (keyPath: string, variables?: Record<string, string>): string => {
     const keys = keyPath.split('.');
     let value: any = translations[locale];
@@ -41,7 +48,8 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (variables) {
       let replaced = value;
       Object.entries(variables).forEach(([key, val]) => {
-        replaced = replaced.replace(`{${key}}`, val);
+        const formattedVal = formatNumber(val);
+        replaced = replaced.replace(`{${key}}`, formattedVal);
       });
       return replaced;
     }
@@ -50,7 +58,7 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <I18nContext.Provider value={{ locale, setLocale, t }}>
+    <I18nContext.Provider value={{ locale, setLocale, t, formatNumber }}>
       {children}
     </I18nContext.Provider>
   );
@@ -63,3 +71,4 @@ export const useTranslations = () => {
   }
   return context;
 };
+

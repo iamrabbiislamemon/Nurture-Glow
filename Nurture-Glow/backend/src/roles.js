@@ -22,7 +22,8 @@ const ROLE_ALIASES = {
   doctor: 'doctor',
   pharmacist: 'pharmacist',
   nutritionist: 'nutritionist',
-  merchandiser: 'merchandiser'
+  merchandiser: 'merchandiser',
+  driver: 'driver'
 };
 
 export const CANONICAL_ROLES = new Set([
@@ -31,6 +32,7 @@ export const CANONICAL_ROLES = new Set([
   'pharmacist',
   'nutritionist',
   'merchandiser',
+  'driver',
   'medical_admin',
   'ops_admin',
   'system_admin'

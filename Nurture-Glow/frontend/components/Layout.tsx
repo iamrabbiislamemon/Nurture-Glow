@@ -1,7 +1,8 @@
 import React, { useState, Suspense, useMemo } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Mic, Menu } from 'lucide-react';
+import { Mic, Menu, Languages, Sun, Moon } from 'lucide-react';
 import { useTranslations } from '../i18n/I18nContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useVoiceCommands } from './voice/useVoiceCommands';
 import { NotificationBell } from './notifications/NotificationBell';
@@ -45,6 +46,7 @@ const Translator = React.lazy(() => import('../pages/Translator'));
 const BloodDonors = React.lazy(() => import('../pages/BloodDonors'));
 const Health = React.lazy(() => import('../pages/Health'));
 const Cart = React.lazy(() => import('../pages/Cart'));
+const Ambulance = React.lazy(() => import('../pages/Ambulance'));
 const Assistant = React.lazy(() => import('../pages/Assistant').then(m => ({ default: m.Assistant })));
 const AppointmentVideo = React.lazy(() => import('../pages/appointments/AppointmentVideo'));
 const LanguageSettings = React.lazy(() => import('../pages/SettingsPages').then(m => ({ default: m.LanguageSettings })));
@@ -53,6 +55,7 @@ const DoctorDashboard = React.lazy(() => import('../pages/dashboards/DoctorDashb
 const PharmacistDashboard = React.lazy(() => import('../pages/dashboards/PharmacistDashboard'));
 const MerchandiserDashboard = React.lazy(() => import('../pages/dashboards/MerchandiserDashboard'));
 const NutritionistDashboard = React.lazy(() => import('../pages/dashboards/NutritionistDashboard'));
+const DriverDashboard = React.lazy(() => import('../pages/dashboards/DriverDashboard'));
 const AdminLogin = React.lazy(() => import('../pages/admin/AdminLogin'));
 const AdminRegister = React.lazy(() => import('../pages/admin/AdminRegister'));
 const AdminLayout = React.lazy(() => import('./AdminLayout'));
@@ -92,6 +95,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole,
 const Layout: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
   const { locale, setLocale, t } = useTranslations();
+  const { theme, toggleTheme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
@@ -115,7 +119,8 @@ const Layout: React.FC = () => {
   const isPharmacist = user?.role === 'pharmacist';
   const isMerchandiser = user?.role === 'merchandiser';
   const isNutritionist = user?.role === 'nutritionist';
-  const usesRoleWorkspace = isDoctor || isPharmacist || isMerchandiser || isNutritionist;
+  const isDriver = user?.role === 'driver';
+  const usesRoleWorkspace = isDoctor || isPharmacist || isMerchandiser || isNutritionist || isDriver;
 
   // ─── Menu data (extracted to navigation/menuConfig) ────────────────
   const patientMenuItems = useMemo(() => buildPatientMenu(t), [t]);
@@ -130,8 +135,8 @@ const Layout: React.FC = () => {
     [user?.role, doctorMenuItems, pharmacistMenuItems, merchandiserMenuItems, nutritionistMenuItems]
   );
   const quickAccessItems = useMemo(
-    () => buildQuickAccessItems(user?.role, patientMenuItems, doctorMenuItems, pharmacistMenuItems, merchandiserMenuItems),
-    [user?.role, patientMenuItems, doctorMenuItems, pharmacistMenuItems, merchandiserMenuItems]
+    () => buildQuickAccessItems(user?.role, patientMenuItems, doctorMenuItems, pharmacistMenuItems, merchandiserMenuItems, nutritionistMenuItems),
+    [user?.role, patientMenuItems, doctorMenuItems, pharmacistMenuItems, merchandiserMenuItems, nutritionistMenuItems]
   );
 
   // Get breadcrumb data
@@ -153,7 +158,11 @@ const Layout: React.FC = () => {
         ? 'Doctor Dashboard'
         : isPharmacist
         ? 'Pharmacy Dashboard'
-        : 'Merchandiser Dashboard';
+        : isMerchandiser
+        ? 'Merchandiser Dashboard'
+        : isNutritionist
+        ? 'Nutritionist Dashboard'
+        : 'Dashboard';
       const crumbs = [{ label: roleLabel, path: '/dashboard?tab=overview' }];
       if (matched && matched.tab !== 'overview') {
         crumbs.push({ label: matched.label, path: matched.path });
@@ -306,6 +315,26 @@ const Layout: React.FC = () => {
             <GlobalSearch />
           </div>
           <div className="flex items-center gap-4 ml-4">
+            {/* Header Language and Theme controls */}
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#1B1C20] border border-gray-200/50 dark:border-[#2E3036] px-3 py-1 rounded-full shadow-sm">
+              <button
+                onClick={() => setLocale(locale === 'en' ? 'bn' : 'en')}
+                className="flex items-center gap-1 text-[11px] font-bold text-gray-500 dark:text-gray-300 hover:text-[#1B4D3E] dark:hover:text-[#34D399] transition-colors cursor-pointer"
+                title={locale === 'en' ? 'বাংলা সংস্করণ' : 'English Version'}
+              >
+                <Languages size={13} />
+                <span>{locale === 'en' ? 'বাং' : 'EN'}</span>
+              </button>
+              <div className="w-px h-3.5 bg-gray-200 dark:bg-[#23252A]" />
+              <button
+                onClick={toggleTheme}
+                className="text-gray-550 dark:text-gray-305 hover:text-[#1B4D3E] dark:hover:text-[#34D399] transition-colors cursor-pointer"
+                title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              >
+                {theme === 'light' ? <Moon size={13} /> : <Sun size={13} />}
+              </button>
+            </div>
+
             <button onClick={toggleListening} disabled={!isSupported} className={`p-3 rounded-full transition-all ${isListening ? 'bg-red-500 text-white shadow-lg shadow-red-200' : 'bg-[#E6C77A]/20 text-[#D4B56A]'}`}>
               <Mic size={20} />
             </button>
@@ -338,6 +367,8 @@ const Layout: React.FC = () => {
                     <MerchandiserDashboard />
                   ) : user?.role === 'nutritionist' ? (
                     <NutritionistDashboard />
+                  ) : user?.role === 'driver' ? (
+                    <DriverDashboard />
                   ) : (
                     <Dashboard />
                   )}
@@ -365,6 +396,7 @@ const Layout: React.FC = () => {
                 <Route path="/myths" element={<ProtectedRoute><Myths /></ProtectedRoute>} />
                 <Route path="/translator" element={<ProtectedRoute><Translator /></ProtectedRoute>} />
                 <Route path="/donors" element={<ProtectedRoute><BloodDonors /></ProtectedRoute>} />
+                <Route path="/ambulance" element={<ProtectedRoute><Ambulance /></ProtectedRoute>} />
               </>
             )}
             <Route

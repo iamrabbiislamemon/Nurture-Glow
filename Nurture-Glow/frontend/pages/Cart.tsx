@@ -55,7 +55,7 @@ const Cart: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         {/* Items List */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
             {items.map(item => (
               <div key={item.id} className="p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-gray-50/30 transition-all">
                 <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
@@ -108,7 +108,7 @@ const Cart: React.FC = () => {
 
         {/* Order Summary */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-6 sticky top-24">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6 sticky top-24">
             <h3 className="text-xl font-bold text-gray-800 border-b border-gray-50 pb-4">Order Summary</h3>
             
             <div className="space-y-4">

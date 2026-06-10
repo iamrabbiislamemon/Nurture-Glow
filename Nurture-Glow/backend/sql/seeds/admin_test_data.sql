@@ -7,45 +7,45 @@
 INSERT INTO `users` (`id`, `phone`, `email`, `password_hash`, `role`, `status`, `created_at`) 
 VALUES (
   'admin-system-001',
-  '+8801700000001', 
-  'system.admin@nurture.com',
-  '$2a$10$Xw.YhbpF5WIhjzB2yluh1etE720roGJ80L6s6wqapFKPdg5HMkEUy',
+  '+8801700000008', 
+  'system.admin@nurtureglow.com',
+  '$2a$12$/yvVYWkGYXzaZdJNxYRr4uCrFQmcKqhymImn4mi7WrWc6iP4/ye6.',
   'system_admin',
   'active',
   NOW()
-) ON DUPLICATE KEY UPDATE email=email;
+) ON DUPLICATE KEY UPDATE phone=VALUES(phone), email=VALUES(email), password_hash=VALUES(password_hash);
 
 -- Create Operations Admin test account
 INSERT INTO `users` (`id`, `phone`, `email`, `password_hash`, `role`, `status`, `created_at`) 
 VALUES (
   'admin-ops-001',
-  '+8801700000002', 
-  'ops.admin@nurture.com',
-  '$2a$10$Xw.YhbpF5WIhjzB2yluh1etE720roGJ80L6s6wqapFKPdg5HMkEUy',
+  '+8801700000007', 
+  'ops.admin@nurtureglow.com',
+  '$2a$12$/yvVYWkGYXzaZdJNxYRr4uCrFQmcKqhymImn4mi7WrWc6iP4/ye6.',
   'ops_admin',
   'active',
   NOW()
-) ON DUPLICATE KEY UPDATE email=email;
+) ON DUPLICATE KEY UPDATE phone=VALUES(phone), email=VALUES(email), password_hash=VALUES(password_hash);
 
 -- Create Medical Admin test account
 INSERT INTO `users` (`id`, `phone`, `email`, `password_hash`, `role`, `status`, `created_at`) 
 VALUES (
   'admin-medical-001',
-  '+8801700000003', 
-  'medical.admin@nurture.com',
-  '$2a$10$Xw.YhbpF5WIhjzB2yluh1etE720roGJ80L6s6wqapFKPdg5HMkEUy',
+  '+8801700000006', 
+  'medical.admin@nurtureglow.com',
+  '$2a$12$/yvVYWkGYXzaZdJNxYRr4uCrFQmcKqhymImn4mi7WrWc6iP4/ye6.',
   'medical_admin',
   'active',
   NOW()
-) ON DUPLICATE KEY UPDATE email=email;
+) ON DUPLICATE KEY UPDATE phone=VALUES(phone), email=VALUES(email), password_hash=VALUES(password_hash);
 
 -- Insert test user profiles
-INSERT INTO `user_profiles` (`user_id`, `name`, `date_of_birth`, `address`)
+INSERT INTO `user_profiles` (`user_id`, `full_name`, `date_of_birth`)
 VALUES 
-  ('admin-system-001', 'System Administrator', '1990-01-01', 'Dhaka, Bangladesh'),
-  ('admin-ops-001', 'Operations Administrator', '1992-01-01', 'Dhaka, Bangladesh'),
-  ('admin-medical-001', 'Medical Administrator', '1988-01-01', 'Dhaka, Bangladesh')
-ON DUPLICATE KEY UPDATE name=name;
+  ('admin-system-001', 'System Administrator', '1990-01-01'),
+  ('admin-ops-001', 'Operations Administrator', '1992-01-01'),
+  ('admin-medical-001', 'Medical Administrator', '1988-01-01')
+ON DUPLICATE KEY UPDATE full_name=full_name;
 
 -- Insert sample system metrics
 INSERT INTO `system_metrics` (`metric_type`, `metric_name`, `metric_value`, `metric_unit`, `status`, `response_time_ms`, `uptime_percentage`, `recorded_at`) VALUES
@@ -131,8 +131,8 @@ ON DUPLICATE KEY UPDATE sender_user_id=sender_user_id;
 -- ============================================================================
 -- TEST CREDENTIALS
 -- ============================================================================
--- Email: system.admin@nurture.com | Role: system_admin
--- Email: ops.admin@nurture.com | Role: ops_admin
--- Email: medical.admin@nurture.com | Role: medical_admin
--- Password for all: Test@123 (Update password_hash with bcrypt hash)
+-- Email: system.admin@nurtureglow.com | Role: system_admin
+-- Email: ops.admin@nurtureglow.com | Role: ops_admin
+-- Email: medical.admin@nurtureglow.com | Role: medical_admin
+-- Password for all: Password123 (Update password_hash with bcrypt hash)
 -- ============================================================================

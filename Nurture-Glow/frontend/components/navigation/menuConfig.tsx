@@ -9,6 +9,7 @@ import {
   Droplet,
   Zap,
   Hospital,
+  Truck,
   Package,
   ShoppingBag,
   User,
@@ -24,6 +25,7 @@ import {
   Smartphone,
   Bell,
   Settings,
+  Clock,
 } from 'lucide-react';
 import type { MenuItem, WorkspaceMenuSection, CategorizedMenu } from './types';
 
@@ -46,6 +48,7 @@ export function buildPatientMenu(t: (key: string) => string): MenuItem[] {
     { icon: <Languages size={20} />, label: t('nav.translator'), path: '/translator' },
     { icon: <Zap size={20} />, label: t('nav.myths'), path: '/myths' },
     { icon: <ShoppingBag size={20} />, label: t('nav.pharmacy'), path: '/pharmacy' },
+    { icon: <Truck size={20} />, label: t('nav.ambulance'), path: '/ambulance' },
   ];
 }
 
@@ -97,11 +100,18 @@ export function buildNutritionistMenu(): MenuItem[] {
   ];
 }
 
+export function buildDriverMenu(): MenuItem[] {
+  return [
+    { icon: <LayoutDashboard size={20} />, label: 'Overview', path: '/dashboard?tab=overview', tab: 'overview' },
+    { icon: <Clock size={20} />, label: 'Trip History', path: '/dashboard?tab=history', tab: 'history' },
+  ];
+}
+
 // ─── Categorized Menu (patient sidebar grouping) ─────────────────────
 export function buildCategorizedMenu(items: MenuItem[]): CategorizedMenu {
   return {
     core: [items[0], items[1], items[2]],
-    health: [items[3], items[4], items[8], items[9], items[10]],
+    health: [items[3], items[4], items[8], items[9], items[10], items[14]],
     lifestyle: [items[5], items[7], items[12]],
     community: [items[6], items[11]],
     shopping: [items[13]],
@@ -139,10 +149,23 @@ function merchandiserSections(items: MenuItem[]): WorkspaceMenuSection[] {
 
 function nutritionistSections(items: MenuItem[]): WorkspaceMenuSection[] {
   return [
-    { title: 'Core', items: items.slice(0, 2), activeClass: 'bg-gradient-to-r from-lime-500/20 to-green-500/20 text-lime-800 font-semibold', hoverClass: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', accentClass: 'bg-gradient-to-b from-lime-500 to-green-500', activeIconClass: 'text-lime-600' },
+    { title: 'Core', items: items.slice(0, 2), activeClass: 'bg-gradient-to-br from-lime-500/20 to-green-500/20 text-lime-800 font-semibold', hoverClass: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900', accentClass: 'bg-gradient-to-b from-lime-500 to-green-500', activeIconClass: 'text-lime-600' },
     { title: 'Patients', items: items.slice(2, 3), activeClass: 'bg-green-500/15 text-green-700 font-semibold', hoverClass: 'text-gray-600 hover:bg-green-50/50 hover:text-gray-900', accentClass: 'bg-green-500', activeIconClass: 'text-green-600' },
     { title: 'Analytics', items: items.slice(3, 4), activeClass: 'bg-emerald-500/15 text-emerald-700 font-semibold', hoverClass: 'text-gray-600 hover:bg-emerald-50/50 hover:text-gray-900', accentClass: 'bg-emerald-500', activeIconClass: 'text-emerald-600' },
     { title: 'Updates', items: items.slice(4, 5), activeClass: 'bg-blue-500/15 text-blue-700 font-semibold', hoverClass: 'text-gray-600 hover:bg-blue-50/50 hover:text-gray-900', accentClass: 'bg-blue-500', activeIconClass: 'text-blue-600' },
+  ];
+}
+
+function driverSections(items: MenuItem[]): WorkspaceMenuSection[] {
+  return [
+    {
+      title: 'Ambulance Portal',
+      items: items.slice(0, 2),
+      activeClass: 'bg-gradient-to-r from-red-500/20 to-amber-500/20 text-red-800 font-semibold',
+      hoverClass: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+      accentClass: 'bg-gradient-to-b from-red-500 to-amber-500',
+      activeIconClass: 'text-red-600',
+    },
   ];
 }
 
@@ -158,6 +181,7 @@ export function buildRoleSidebarSections(
     case 'pharmacist': return pharmacistSections(pharmacistItems);
     case 'merchandiser': return merchandiserSections(merchandiserItems);
     case 'nutritionist': return nutritionistSections(nutritionistItems);
+    case 'driver': return driverSections(buildDriverMenu());
     default: return [];
   }
 }
@@ -168,7 +192,8 @@ export function buildQuickAccessItems(
   patientItems: MenuItem[],
   doctorItems: MenuItem[],
   pharmacistItems: MenuItem[],
-  merchandiserItems: MenuItem[]
+  merchandiserItems: MenuItem[],
+  nutritionistItems: MenuItem[]
 ): MenuItem[] {
   switch (role) {
     case 'doctor':
@@ -177,6 +202,12 @@ export function buildQuickAccessItems(
       return [pharmacistItems[0], pharmacistItems[1], pharmacistItems[2], pharmacistItems[4]];
     case 'merchandiser':
       return [merchandiserItems[0], merchandiserItems[1], merchandiserItems[2], merchandiserItems[3]];
+    case 'nutritionist':
+      return [nutritionistItems[0], nutritionistItems[1], nutritionistItems[2], nutritionistItems[4]];
+    case 'driver': {
+      const driverItems = buildDriverMenu();
+      return [driverItems[0], driverItems[1]];
+    }
     default:
       return [patientItems[0], patientItems[1], patientItems[3], patientItems[6], patientItems[2]];
   }

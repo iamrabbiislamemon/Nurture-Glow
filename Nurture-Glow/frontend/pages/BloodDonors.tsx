@@ -281,7 +281,7 @@ const BloodDonors: React.FC = () => {
       </div>
 
       {/* District Selector */}
-      <div className="bg-white rounded-[40px] p-6 shadow-sm border border-gray-100 space-y-4">
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
         {/* Location detecting banner */}
         {isDetectingLocation && (
           <div className="flex items-center gap-3 px-5 py-3 bg-blue-50 rounded-2xl animate-pulse">
@@ -501,7 +501,7 @@ const BloodDonors: React.FC = () => {
             <p className="text-gray-400 text-sm">Try selecting a different district or blood group</p>
           </div>
         ) : filtered.map(d => (
-          <div key={d.id} className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 flex flex-col gap-6 group hover:border-red-500 transition-all relative">
+          <div key={d.id} className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col gap-6 group hover:border-red-500 transition-all relative">
             <div className="flex justify-between items-start">
                <div className="w-16 h-16 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center font-bold text-xl shadow-inner group-hover:bg-red-500 group-hover:text-white transition-all">
                   {d.bloodGroup || 'N/A'}
@@ -538,7 +538,7 @@ const BloodDonors: React.FC = () => {
 
       {/* Recent Requests Section */}
       {requests.length > 0 && (
-        <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-6">
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
           <h2 className="text-xl font-bold text-gray-800 flex items-center gap-3">
              <Clock className="text-orange-500" /> Recent Urgent Requests
           </h2>
@@ -567,7 +567,7 @@ const BloodDonors: React.FC = () => {
       {/* Become Donor Modal */}
       {showBecomeModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-[40px] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Become a Donor</h2>
               <button onClick={() => { setShowBecomeModal(false); setRegistrationError(''); setAlreadyRegistered(false); }} className="p-2 hover:bg-gray-100 rounded-full"><X size={24}/></button>
@@ -675,7 +675,7 @@ const BloodDonors: React.FC = () => {
       {/* Call Modal Desktop Fallback */}
       {showCallModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-sm rounded-[40px] p-10 shadow-2xl text-center space-y-6 animate-in zoom-in-95">
+          <div className="bg-white w-full max-w-sm rounded-3xl p-10 shadow-2xl text-center space-y-6 animate-in zoom-in-95">
             <div className="w-20 h-20 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
               <Phone size={40} />
             </div>
@@ -703,7 +703,7 @@ const BloodDonors: React.FC = () => {
       {/* Urgent Request Modal */}
       {showUrgentModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-[40px] p-10 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-white w-full max-w-md rounded-3xl p-10 shadow-2xl animate-in zoom-in-95">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Urgent Request</h2>
               <button onClick={() => setShowUrgentModal(null)} className="p-2 hover:bg-gray-100 rounded-full"><X size={24}/></button>

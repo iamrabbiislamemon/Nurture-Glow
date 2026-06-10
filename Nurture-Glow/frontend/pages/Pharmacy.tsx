@@ -13,7 +13,7 @@ const ProductCard = React.memo<{
   onToggleFav: (e: React.MouseEvent, id: string) => void;
   onAddToCart: (m: Medicine) => void;
 }>(({ product: m, isFav, onToggleFav, onAddToCart }) => (
-  <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden group hover:border-[#BFE6DA] transition-all flex flex-col">
+  <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden group hover:border-[#BFE6DA] transition-all flex flex-col">
     <div className="aspect-square relative overflow-hidden bg-gray-50">
       <img src={m.image} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={m.name} />
       <button
@@ -159,7 +159,7 @@ const Pharmacy: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in duration-500 pb-20">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in duration-500 pb-20">
       <SubscriptionModal 
         isOpen={showSubModal}
         onClose={() => setShowSubModal(false)}
@@ -225,7 +225,7 @@ const Pharmacy: React.FC = () => {
       </div>
 
       {showSuccess && (
-        <div className="bg-green-50 border border-green-100 p-6 rounded-[32px] flex items-center gap-4 animate-in slide-in-from-top-4 fixed top-24 left-1/2 -translate-x-1/2 z-[100] shadow-2xl backdrop-blur-md bg-green-50/90">
+        <div className="bg-green-50 border border-green-100 p-6 rounded-3xl flex items-center gap-4 animate-in slide-in-from-top-4 fixed top-24 left-1/2 -translate-x-1/2 z-[100] shadow-2xl backdrop-blur-md bg-green-50/90">
            <div className="p-3 bg-green-500 text-white rounded-2xl"><CheckCircle2/></div>
            <div>
               <p className="font-bold text-green-800">Added {orderedItem} to cart!</p>
@@ -252,7 +252,7 @@ const Pharmacy: React.FC = () => {
         )}
       </div>
 
-      <div className="p-10 bg-white rounded-[48px] border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-10 shadow-sm relative overflow-hidden">
+      <div className="p-10 bg-white rounded-3xl border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-10 shadow-sm relative overflow-hidden">
          {isSubscribed && (
            <div className="absolute top-6 left-6 flex items-center gap-2 px-4 py-1.5 bg-teal-500 text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-teal-500/20 animate-in zoom-in duration-300">
              <CheckCircle2 size={14} /> Active Subscription

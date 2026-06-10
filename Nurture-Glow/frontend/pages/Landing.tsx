@@ -11,7 +11,7 @@ import Footer from '../components/landing/Footer';
 import { useTranslations } from '../i18n/I18nContext';
 
 const Landing: React.FC = () => {
-  const { t } = useTranslations();
+  const { t, formatNumber } = useTranslations();
   const [formData, setFormData] = React.useState({ name: '', email: '' });
   const [formStatus, setFormStatus] = React.useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
@@ -80,11 +80,11 @@ const Landing: React.FC = () => {
                 </p>
                 <div className="grid grid-cols-2 gap-8 pt-4">
                   <div className="space-y-1">
-                    <p className="text-3xl font-bold bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent font-display">{t('landing.about.accuracyPercent')}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent font-sans">{t('landing.about.accuracyPercent')}</p>
                     <p className="text-xs font-semibold text-gray-600 uppercase tracking-[0.15em] font-sans">{t('landing.about.accuracy')}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-3xl font-bold bg-gradient-to-r from-amber-900 to-yellow-800 bg-clip-text text-transparent font-display">{t('landing.about.supportTime')}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-amber-900 to-yellow-800 bg-clip-text text-transparent font-sans">{t('landing.about.supportTime')}</p>
                     <p className="text-xs font-semibold text-gray-600 uppercase tracking-[0.15em] font-sans">{t('landing.about.support')}</p>
                   </div>
                 </div>
@@ -123,7 +123,7 @@ const Landing: React.FC = () => {
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 shadow-md transition-all group-hover:scale-110 bg-white ${f.color}`}>
                     {React.cloneElement(f.icon as React.ReactElement<any>, { size: 24 })}
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 tracking-tight font-sans">{f.title}</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 tracking-tight font-display">{f.title}</h3>
                   <p className="text-gray-700 text-sm leading-[1.65] font-sans">{f.desc}</p>
                 </div>
               ))}
@@ -132,11 +132,11 @@ const Landing: React.FC = () => {
         </section>
 
         {/* Section: Pricing */}
-        <section id="pricing" className="py-20 bg-gradient-to-b from-slate-50 to-white">
+        <section id="pricing" className="py-20 bg-gradient-to-b from-amber-50 via-yellow-25 to-white">
           <div className="max-w-[1400px] mx-auto px-10">
             <div className="reveal flex flex-col lg:flex-row justify-between items-end mb-12 gap-8">
               <div className="max-w-3xl">
-                <span className="inline-block px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-[0.2em] mb-4 rounded-full shadow-sm">{t('landing.pricing.badge')}</span>
+                <span className="inline-block px-4 py-2 bg-amber-100 text-amber-900 font-bold text-xs uppercase tracking-[0.2em] mb-4 rounded-full shadow-sm">{t('landing.pricing.badge')}</span>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-[1.15] tracking-tight font-display">{t('landing.pricing.title')}</h2>
               </div>
               <Link to="/signup" className="px-8 py-3 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-full font-semibold text-sm uppercase tracking-wider hover:shadow-lg hover:-translate-y-0.5 transition-all">{t('landing.pricing.compare')}</Link>
@@ -144,9 +144,9 @@ const Landing: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { name: t('landing.pricing.plans.essential'), price: "0", icon: <Heart size={28}/>, features: ["Basic Health Logs", "Public Community", "Vaccine Alerts"], color: "from-emerald-50 to-yellow-50" },
-                { name: t('landing.pricing.plans.glowing'), price: "1,200", icon: <Star size={28}/>, featured: true, features: ["AI Health Ally", "Video Consults", "Priority Pharmacy"], color: "from-slate-50 to-emerald-50" },
-                { name: t('landing.pricing.plans.legacy'), price: "2,500", icon: <Sparkles size={28}/>, features: ["Family Hub", "Emergency Care", "Home Sample Pickup"], color: "from-amber-50 to-orange-50" },
+                { name: t('landing.pricing.plans.essential'), price: "0", icon: <Heart size={28}/>, features: [t('landing.pricing.features.healthLogs'), t('landing.pricing.features.community'), t('landing.pricing.features.vaccineAlerts')], color: "from-emerald-50 to-yellow-50" },
+                { name: t('landing.pricing.plans.glowing'), price: "1,200", icon: <Star size={28}/>, featured: true, features: [t('landing.pricing.features.aiAlly'), t('landing.pricing.features.videoConsults'), t('landing.pricing.features.priorityPharmacy')], color: "from-slate-50 to-emerald-50" },
+                { name: t('landing.pricing.plans.legacy'), price: "2,500", icon: <Sparkles size={28}/>, features: [t('landing.pricing.features.familyHub'), t('landing.pricing.features.emergencyCare'), t('landing.pricing.features.samplePickup')], color: "from-amber-50 to-orange-50" },
               ].map((plan, i) => (
                 <div 
                   key={i} 
@@ -154,13 +154,13 @@ const Landing: React.FC = () => {
                   style={{ transitionDelay: `${i * 0.15}s` }}
                 >
                   {plan.featured && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-full">Popular</div>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-full">{t('landing.pricing.plans.popular')}</div>
                   )}
                   <div className="mb-6 p-3 bg-white rounded-2xl w-fit text-emerald-700 shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all">{plan.icon}</div>
                   <h3 className="text-xl font-bold mb-2 text-gray-900 tracking-tight font-sans">{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-3xl font-bold text-gray-900 font-display">৳{plan.price}</span>
-                    {plan.price !== "0" && <span className="text-gray-600 text-sm font-medium font-sans">/mo</span>}
+                    <span className="text-3xl font-bold text-gray-900 font-sans">৳{formatNumber(plan.price)}</span>
+                    {plan.price !== "0" && <span className="text-gray-600 text-sm font-medium font-sans">{t('landing.pricing.perMonth')}</span>}
                   </div>
                   <ul className="space-y-3 mb-6 flex-1">
                     {plan.features.map((f, j) => (
@@ -171,7 +171,7 @@ const Landing: React.FC = () => {
                   </ul>
                   <Link 
                     to="/signup" 
-                    className={`w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2 ${plan.featured ? 'bg-gradient-to-r from-emerald-700 to-emerald-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-1' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                    className={`w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2 ${plan.featured ? 'bg-gradient-to-r from-emerald-700 to-emerald-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-1' : 'bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100'}`}
                   >
                     {t('landing.pricing.select')} <ArrowRight size={16} />
                   </Link>
@@ -187,7 +187,7 @@ const Landing: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div className="reveal text-white space-y-8">
                   <div>
-                    <h2 className="text-4xl md:text-5xl font-bold leading-[1.15] tracking-tight font-display">{t('landing.contact.title')} <br /><span className="bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent italic">{t('landing.contact.italic')}</span></h2>
+                    <h2 className="text-4xl md:text-5xl font-bold leading-[1.15] tracking-tight font-display" style={{ color: '#4E9B6F' }}>{t('landing.contact.title')}</h2>
                     <p className="text-gray-300 text-base font-normal mt-6 leading-[1.7] max-w-lg font-sans">{t('landing.contact.desc')}</p>
                   </div>
                   <div className="flex gap-6 items-center group">
@@ -222,7 +222,7 @@ const Landing: React.FC = () => {
                       </div>
                       {formStatus === 'success' && (
                         <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-sm font-medium text-center">
-                          ✓ Thank you! We'll get back to you soon.
+                          {t('landing.contact.formSuccess')}
                         </div>
                       )}
                       <button 
@@ -230,7 +230,7 @@ const Landing: React.FC = () => {
                         disabled={formStatus === 'submitting'}
                         className="w-full py-3 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 uppercase tracking-wider text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {formStatus === 'submitting' ? 'Sending...' : t('landing.contact.form.submit')} <Send size={18} />
+                        {formStatus === 'submitting' ? t('landing.contact.form.sending') : t('landing.contact.form.submit')} <Send size={18} />
                       </button>
                     </form>
                 </div>

@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   CSS VARIABLES FOR SEMANTIC THEMING (Tailwind v4)
+   ============================================================ */
+:root {
+  --color-page: #F7F5EF;
+  --color-surface: #FFFFFF;
+  --color-inner: #E8E4DC;
+  --color-line: #E8E4DC;
+  --color-heading: #1A3A4D;
+  --color-main-text: #1A1A1A;
+  --color-muted-text: #6B6B6B;
+  
+  --color-brand-emerald: #1B4D3E;
+  --color-brand-gold: #C9A961;
+  --color-brand-burgundy: #6B4C45;
+  --color-accent-sage: #4A6B63;
+  --color-accent-taupe: #9B8B7E;
+  --color-accent-bronze: #8B7355;
+}
+
+.dark {
+  --color-page: #050505;
+  --color-surface: #0A0A0A;
+  --color-inner: #121212;
+  --color-line: #1C1C1E;
+  --color-heading: #FFFFFF;
+  --color-main-text: #FFFFFF;
+  --color-muted-text: #A1A1AA;
+}
+
 /* ============================================================
    DESIGN TOKENS — single source of truth for the whole app
    Tailwind v4 @theme makes these available as utilities:
@@ -21,6 +53,19 @@
   --color-neutral-muted: #6B6B6B;
   --color-neutral-border: #E8E4DC;
 
+  /* --- Semantic Tokens mapped to custom CSS variables --- */
+  --color-page: var(--color-page);
+  --color-surface: var(--color-surface);
+  --color-inner: var(--color-inner);
+  --color-line: var(--color-line);
+  --color-heading: var(--color-heading);
+  --color-main-text: var(--color-main-text);
+  --color-muted-text: var(--color-muted-text);
+  
+  --color-brand-emerald: var(--color-brand-emerald);
+  --color-brand-gold: var(--color-brand-gold);
+  --color-brand-burgundy: var(--color-brand-burgundy);
+
   /* --- Fonts --- */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
@@ -31,6 +76,40 @@
   --shadow-card-hover: 0 12px 32px rgba(27, 77, 62, 0.10);
   --shadow-elevated: 0 8px 24px rgba(27, 77, 62, 0.15);
 }
+
+/* ============================================================
+   NUMERAL NORMALISATION
+   Override Playfair Display's old-style figures with Inter's
+   clean lining numerals via unicode-range substitution.
+   This ensures all digits, currency, % and / symbols render
+   consistently in Inter — even inside font-display elements.
+   ============================================================ */
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 100 900;
+  src: local('Inter'), local('Inter-Regular');
+  unicode-range:
+    U+0030-0039,   /* 0–9 */
+    U+0025,        /* % */
+    U+002F,        /* / */
+    U+002B,        /* + */
+    U+002D,        /* - */
+    U+002E,        /* . */
+    U+002C,        /* , */
+    U+0023,        /* # */
+    U+09F3,        /* ৳ Bangladeshi Taka sign */
+    U+0024,        /* $ */
+    U+00A3,        /* £ */
+    U+20AC;        /* € */
+}
+
+/* Global: always use lining (upright) tabular numerals */
+*, *::before, *::after {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+
 
 /* ============================================================
    BASE — applied globally
@@ -53,6 +132,9 @@ body {
 body[lang="bn"],
 .lang-bn,
 [lang="bn"] {
+  --font-sans: 'Hind Siliguri', sans-serif !important;
+  --font-display: 'Hind Siliguri', sans-serif !important;
+  --font-serif: 'Hind Siliguri', sans-serif !important;
   font-family: var(--font-bangla) !important;
   letter-spacing: 0.01em !important;
   word-spacing: 0.03em !important;
@@ -63,6 +145,9 @@ body[lang="bn"],
 body[lang="bn"] *,
 .lang-bn *,
 [lang="bn"] * {
+  --font-sans: 'Hind Siliguri', sans-serif !important;
+  --font-display: 'Hind Siliguri', sans-serif !important;
+  --font-serif: 'Hind Siliguri', sans-serif !important;
   font-family: var(--font-bangla) !important;
   letter-spacing: 0.01em !important;
   word-spacing: 0.03em !important;
@@ -245,4 +330,340 @@ body[lang="bn"] .font-serif {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+
+/* ============================================================
+   DARK MODE THEMING OVERRIDES — "Stealth Matte Black" Style
+   ============================================================ */
+html.dark,
+.dark {
+  color-scheme: dark;
+
+  /* Map white and light gray to matte black tones */
+  --color-white: #0A0A0A !important;
+  --color-gray-50: #050505 !important;
+  --color-gray-100: #0A0A0A !important;
+  --color-gray-200: #121212 !important;
+  --color-gray-300: #1C1C1E !important;
+  
+  /* Slate and zinc fallbacks */
+  --color-slate-50: #050505 !important;
+  --color-slate-100: #0A0A0A !important;
+  --color-slate-200: #121212 !important;
+  --color-slate-300: #1C1C1E !important;
+
+  --color-zinc-50: #050505 !important;
+  --color-zinc-100: #0A0A0A !important;
+  --color-zinc-200: #121212 !important;
+  --color-zinc-300: #1C1C1E !important;
+
+  /* Tailwind Core Color Variable Overrides for Readable Text */
+  --color-gray-950: #FFFFFF !important;
+  --color-gray-900: #FFFFFF !important;
+  --color-gray-800: #FFFFFF !important;
+  --color-gray-700: #F4F4F5 !important;
+  --color-gray-600: #E4E4E7 !important;
+  --color-gray-500: #A1A1AA !important;
+  --color-gray-400: #71717A !important;
+
+  --color-slate-950: #FFFFFF !important;
+  --color-slate-900: #FFFFFF !important;
+  --color-slate-800: #F1F5F9 !important;
+  --color-slate-700: #E2E8F0 !important;
+  --color-slate-600: #CBD5E1 !important;
+  --color-slate-500: #94A3B8 !important;
+  --color-slate-400: #64748B !important;
+
+  --color-emerald-950: #A7F3D0 !important;
+  --color-emerald-900: #34D399 !important;
+  --color-emerald-800: #6EE7B7 !important;
+  --color-emerald-700: #A7F3D0 !important;
+
+  --color-green-950: #BBF7D0 !important;
+  --color-green-900: #4ADE80 !important;
+  --color-green-800: #86EFAC !important;
+
+  --color-amber-950: #FEF3C7 !important;
+  --color-amber-900: #FBBF24 !important;
+  --color-amber-800: #FDE047 !important;
+
+  --color-yellow-950: #FEF9C3 !important;
+  --color-yellow-900: #FACC15 !important;
+  --color-yellow-800: #FEF08A !important;
+
+  /* Translucent dark fallbacks for light color blocks */
+  --color-lime-50: rgba(132, 204, 22, 0.1) !important;
+  --color-emerald-50: rgba(16, 185, 129, 0.1) !important;
+  --color-blue-50: rgba(59, 130, 246, 0.1) !important;
+  --color-amber-50: rgba(245, 158, 11, 0.1) !important;
+  --color-purple-50: rgba(139, 92, 246, 0.1) !important;
+  --color-teal-50: rgba(20, 184, 166, 0.1) !important;
+  --color-green-50: rgba(34, 197, 94, 0.1) !important;
+  
+  --color-lime-100: rgba(132, 204, 22, 0.15) !important;
+  --color-emerald-100: rgba(16, 185, 129, 0.15) !important;
+  --color-blue-100: rgba(59, 130, 246, 0.15) !important;
+  --color-amber-100: rgba(245, 158, 11, 0.15) !important;
+  --color-purple-100: rgba(139, 92, 246, 0.15) !important;
+  --color-teal-100: rgba(20, 184, 166, 0.15) !important;
+  --color-green-100: rgba(34, 197, 94, 0.15) !important;
+
+  /* Light borders overrides */
+  --color-lime-200: #1C1C1E !important;
+  --color-lime-300: #2C2C2E !important;
+  --color-emerald-200: #1C1C1E !important;
+  --color-blue-200: #1C1C1E !important;
+  --color-amber-200: #1C1C1E !important;
+  --color-purple-200: #1C1C1E !important;
+  --color-teal-200: #1C1C1E !important;
+}
+
+.dark body {
+  background-color: #050505 !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-sans);
+}
+
+/* Escaped selectors for arbitrary light layouts */
+.dark .bg-\[\#F7F5EF\] {
+  background-color: #050505 !important;
+}
+.dark .bg-\[\#f8f6f1\] {
+  background-color: #050505 !important;
+}
+.dark .bg-\[\#F7F5EF\]\/95 {
+  background-color: rgba(5, 5, 5, 0.95) !important;
+}
+
+/* Sidebar Nav */
+.dark aside {
+  background-color: #0A0A0A !important;
+  border-right: 1px solid #1C1C1E !important;
+}
+.dark aside .bg-gray-50 {
+  background-color: #0A0A0A !important;
+}
+
+/* Header */
+.dark header {
+  background-color: rgba(10, 10, 10, 0.85) !important;
+  border-bottom: 1px solid #1C1C1E !important;
+}
+.dark header .bg-gray-50 {
+  background-color: #0A0A0A !important;
+}
+
+/* Modals */
+.dark .fixed .bg-white,
+.dark [role="dialog"],
+.dark .modal-content {
+  background-color: #0A0A0A !important;
+  border: 1px solid #1C1C1E !important;
+}
+
+/* Inputs, Textareas, Selects */
+.dark input, 
+.dark textarea, 
+.dark select {
+  background-color: #0A0A0A !important;
+  border-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  background-color: #121212 !important;
+  border-color: var(--color-primary-gold) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #71717A !important;
+}
+
+/* Map dark text colors to light text colors so they are readable on dark backgrounds */
+.dark .text-gray-950,
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-\[\#1F1F1F\],
+.dark .text-slate-950,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #FFFFFF !important;
+}
+.dark .text-gray-600,
+.dark .text-gray-55,
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-slate-500,
+.dark .text-slate-600 {
+  color: #A1A1AA !important;
+}
+
+/* Map other dark brand texts to bright readable versions in dark mode */
+.dark .text-emerald-950,
+.dark .text-emerald-900,
+.dark .text-emerald-800 {
+  color: #34D399 !important;
+}
+.dark .text-green-950,
+.dark .text-green-900,
+.dark .text-green-800 {
+  color: #4ADE80 !important;
+}
+.dark .text-amber-950,
+.dark .text-amber-900,
+.dark .text-amber-800 {
+  color: #FBBF24 !important;
+}
+.dark .text-yellow-950,
+.dark .text-yellow-900,
+.dark .text-yellow-800 {
+  color: #FACC15 !important;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover {
+  background-color: #0A0A0A !important;
+}
+.dark .hover\:text-gray-900:hover,
+.dark .hover\:text-gray-800:hover {
+  color: #FFFFFF !important;
+}
+
+/* Borders */
+.dark .border-gray-50,
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-[#E8E4DC] {
+  border-color: #1C1C1E !important;
+}
+
+/* Subtle Cards/Shadows */
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Auth Pages Specifics */
+.dark .lg\:w-\[55\%\] {
+  background-color: #050505 !important;
+}
+.dark .lg\:w-\[55\%\] .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, rgba(27, 77, 62, 0.2), #050505, rgba(201, 169, 97, 0.15)) !important;
+}
+.dark .lg\:w-\[55\%\] .bg-white\/70 {
+  background-color: rgba(10, 10, 10, 0.8) !important;
+}
+.dark .lg\:w-\[55\%\] .bg-white\/50 {
+  background-color: rgba(10, 10, 10, 0.6) !important;
+}
+
+/* Dark mode overrides for background class values */
+.dark .bg-\[\#16171A\],
+.dark .dark\:bg-\[\#16171A\] {
+  background-color: #050505 !important;
+}
+.dark .bg-\[\#16171A\]\/80,
+.dark .dark\:bg-\[\#16171A\]\/80 {
+  background-color: rgba(5, 5, 5, 0.8) !important;
+}
+.dark .bg-\[\#0F1012\],
+.dark .dark\:bg-\[\#0F1012\] {
+  background-color: #050505 !important;
+}
+
+/* Landing Page Gradients Overrides */
+.dark .min-h-screen.bg-gradient-to-b.from-yellow-50 {
+  background-image: linear-gradient(to bottom, #0A0A0A, #121212, #0A0A0A) !important;
+}
+.dark section.bg-gradient-to-r.from-yellow-50 {
+  background-image: linear-gradient(to right, #0A0A0A, #121212, #0A0A0A) !important;
+}
+.dark section.bg-gradient-to-b.from-amber-50 {
+  background-image: linear-gradient(to bottom, #121212, #18181C, #0A0A0A) !important;
+}
+
+/* Role-based Dashboard Gradients Overrides */
+.dark .min-h-screen.bg-gradient-to-b.from-\[\#f8f6f1\].via-\[\#fafbf7\].to-white,
+.dark .bg-gradient-to-b.from-\[\#f8f6f1\].via-\[\#fafbf7\].to-white {
+  background-image: linear-gradient(to bottom, #050505, #0A0A0A, #050505) !important;
+}
+
+/* Feature cards soft gradients */
+.dark .from-emerald-50 { --tw-gradient-from: rgba(27, 77, 62, 0.1) !important; }
+.dark .to-green-50 { --tw-gradient-to: rgba(34, 197, 94, 0.02) !important; }
+.dark .from-slate-50 { --tw-gradient-from: rgba(100, 116, 139, 0.1) !important; }
+.dark .to-gray-50 { --tw-gradient-to: rgba(107, 114, 128, 0.02) !important; }
+.dark .from-yellow-50 { --tw-gradient-from: rgba(201, 169, 97, 0.1) !important; }
+.dark .to-amber-50 { --tw-gradient-to: rgba(245, 158, 11, 0.02) !important; }
+.dark .from-amber-50 { --tw-gradient-from: rgba(245, 158, 11, 0.1) !important; }
+.dark .to-yellow-50 { --tw-gradient-to: rgba(201, 169, 97, 0.02) !important; }
+.dark .from-teal-50 { --tw-gradient-from: rgba(20, 184, 166, 0.1) !important; }
+.dark .to-cyan-50 { --tw-gradient-to: rgba(6, 182, 212, 0.02) !important; }
+.dark .from-green-50 { --tw-gradient-from: rgba(34, 197, 94, 0.1) !important; }
+.dark .to-emerald-50 { --tw-gradient-to: rgba(27, 77, 62, 0.02) !important; }
+
+.dark .from-emerald-50.via-yellow-25.to-slate-50 {
+  background-image: linear-gradient(135deg, rgba(27, 77, 62, 0.15), rgba(201, 169, 97, 0.05), rgba(100, 116, 139, 0.05)) !important;
+}
+
+/* Fix top navbar on landing */
+.dark nav {
+  background-color: rgba(10, 10, 10, 0.92) !important;
+  border-bottom: 1px solid rgba(38, 38, 43, 0.5) !important;
+}
+.dark nav .text-gray-55,
+.dark nav .text-gray-500 {
+  color: #A1A1AA !important;
+}
+.dark nav .hover\:text-\[\#1F1F1F\]:hover {
+  color: #FFFFFF !important;
+}
+.dark nav .text-\[\#1F1F1F\] {
+  color: #FFFFFF !important;
+}
+.dark nav .bg-\[\#F7F5EF\]\/95 {
+  background-color: rgba(10, 10, 10, 0.95) !important;
+}
+.dark nav .bg-\[\#F7F5EF\] {
+  background-color: #0A0A0A !important;
+}
+
+/* Fix specific widgets/components dashboard layout */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #121212 !important;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-primary-gold) !important;
+}
+
+/* Soft gold focus glow in dark mode */
+.dark .focus-within\:ring-emerald-500\/20:focus-within {
+  --tw-ring-color: rgba(201, 169, 97, 0.35) !important;
+}
+
+/* Dashboard Breadcrumb */
+.dark .from-white\/50.to-white\/30 {
+  background-image: linear-gradient(to right, rgba(18, 18, 18, 0.6), rgba(18, 18, 18, 0.4)) !important;
+}
+
+/* Patient profile & submenus */
+.dark .hover\:bg-emerald-50\/50:hover {
+  background-color: rgba(27, 77, 62, 0.12) !important;
+}
+.dark .hover\:bg-amber-50\/50:hover {
+  background-color: rgba(201, 169, 97, 0.12) !important;
+}
+.dark .hover\:bg-blue-50\/50:hover {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+}
+.dark .hover\:bg-purple-50\/50:hover {
+  background-color: rgba(139, 92, 246, 0.12) !important;
 }
