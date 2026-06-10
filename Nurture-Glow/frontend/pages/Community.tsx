@@ -89,7 +89,7 @@ export const Community: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
       {toast && (
         <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 duration-300 ${toast.type === 'success' ? 'bg-teal-600 text-white' : 'bg-red-600 text-white'}`}>
           {toast.type === 'success' ? <CheckCircle2 size={18}/> : <AlertTriangle size={18}/>}
@@ -99,7 +99,7 @@ export const Community: React.FC = () => {
 
       {deleteConfirmId && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <AlertTriangle size={32}/>
             </div>
@@ -115,7 +115,7 @@ export const Community: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-6">
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
         <div className="flex gap-4">
           <div className="w-12 h-12 bg-[#F7F5EF] rounded-full flex items-center justify-center text-teal-600 font-bold shrink-0 border border-teal-50 shadow-inner">
             {user?.name?.[0] || 'A'}
@@ -152,7 +152,7 @@ export const Community: React.FC = () => {
 
       <div className="space-y-6">
         {posts.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
                <MessageSquare size={32}/>
             </div>
@@ -160,7 +160,7 @@ export const Community: React.FC = () => {
           </div>
         ) : (
           posts.map(post => (
-            <div key={post.id} className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500 relative z-10">
+            <div key={post.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500 relative z-10">
               <div className="p-8 space-y-6">
                 <div className="flex justify-between items-start">
                   <div className="flex gap-4 items-center">
@@ -185,7 +185,7 @@ export const Community: React.FC = () => {
                 <p className="text-gray-700 leading-relaxed text-lg font-medium">{post.content}</p>
 
                 {post.image && (
-                  <div className="rounded-[32px] overflow-hidden shadow-sm border border-gray-100">
+                  <div className="rounded-3xl overflow-hidden shadow-sm border border-gray-100">
                     <img src={post.image} loading="lazy" className="w-full h-auto max-h-[500px] object-cover hover:scale-[1.02] transition-transform duration-700" alt="Community shared" />
                   </div>
                 )}
@@ -241,7 +241,7 @@ export const Community: React.FC = () => {
 
                   {deleteCommentConfirm && (
                     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-                      <div className="bg-white p-6 rounded-[28px] max-w-xs w-full shadow-2xl text-center space-y-4 animate-in zoom-in-95">
+                      <div className="bg-white p-6 rounded-3xl max-w-xs w-full shadow-2xl text-center space-y-4 animate-in zoom-in-95">
                         <p className="font-bold text-gray-800">{t('community.removeComment')}</p>
                         <div className="flex gap-2">
                            <button onClick={() => setDeleteCommentConfirm(null)} className="flex-1 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold cursor-pointer">{t('common.back')}</button>

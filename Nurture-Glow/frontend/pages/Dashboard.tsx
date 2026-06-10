@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { 
   Activity, Droplet, Weight, Clock, CheckCircle, ChevronRight, BookOpen, 
@@ -518,6 +518,32 @@ const quickActions = [
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Emergency Ambulance Shortcut Banner */}
+        <div className="bg-gradient-to-r from-red-500 via-rose-500 to-red-650 rounded-[32px] p-6 shadow-sm border border-red-200/10 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all duration-300">
+          <div className="space-y-2 max-w-2xl text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
+              <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
+              <span className="text-[10px] font-black uppercase tracking-wider">
+                {locale === 'bn' ? 'জরুরি অ্যাম্বুলেন্স সেবা' : 'Emergency Ambulance Service'}
+              </span>
+            </div>
+            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">
+              {locale === 'bn' ? 'জরুরি অ্যাম্বুলেন্স প্রয়োজন?' : 'Need Ground Transport Assistance?'}
+            </h2>
+            <p className="text-sm text-white/80 leading-relaxed">
+              {locale === 'bn'
+                ? 'এক ট্যাপে আপনার অবস্থানে একটি মাতৃত্বকালীন অ্যাম্বুলেন্স অনুরোধ করুন। চালক শুধুমাত্র আপনার যোগাযোগের বিবরণ ও অবস্থান পাবেন, আপনার সংবেদনশীল চিকিৎসা বিবরণ সম্পূর্ণ নিরাপদ।'
+                : 'Instantly request a maternal ambulance to your location with one tap. The driver receives coordinates and contact info, with complete protection of your pregnancy and medical history.'}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/ambulance')}
+            className="self-start md:self-center px-6 py-4 bg-white text-red-650 font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md hover:bg-red-50 hover:scale-102 transition-all cursor-pointer border-none shrink-0"
+          >
+            {locale === 'bn' ? 'অ্যাম্বুলেন্স ডিসপ্যাচ খুলুন' : 'Access Ambulance Dispatch'} &rarr;
+          </button>
         </div>
 
         {/* Health Metrics Cards */}

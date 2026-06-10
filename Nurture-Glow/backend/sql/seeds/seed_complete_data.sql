@@ -24,7 +24,7 @@ UPDATE users SET hospital_id = 'd21ff2ad-11d2-4d4c-825f-e4bc9e8d7c31' WHERE emai
 UPDATE users SET hospital_id = '48b1b64f-fe94-4efa-b196-94c80a91de83' WHERE email = 'rabbiislamemon639@gmail.com';
 
 -- Fill health_id for users missing it
-UPDATE users SET health_id = CONCAT('HID-', UPPER(SUBSTRING(MD5(RAND()), 1, 8))) WHERE health_id IS NULL OR health_id = '';
+UPDATE users SET health_id = CONCAT('HID-', UPPER(HEX(RANDOM_BYTES(4)))) WHERE health_id IS NULL OR health_id = '';
 
 -- user_profiles: fill date_of_birth and gender
 UPDATE user_profiles up JOIN users u ON u.id = up.user_id SET up.date_of_birth = '1995-03-15', up.gender = 'female' WHERE u.role = 'mother' AND up.date_of_birth IS NULL;

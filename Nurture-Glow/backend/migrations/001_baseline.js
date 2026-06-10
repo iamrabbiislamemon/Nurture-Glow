@@ -46,7 +46,13 @@ function splitSqlStatements(sql) {
 }
 
 async function runSqlFile(queryFn, fileName) {
-  const filePath = path.resolve(BACKEND_ROOT, fileName);
+  let relativePath;
+  if (['database-schema.sql', 'create_system_tables.sql', 'admin_tables_schema.sql', 'create_dashboard_views.sql'].includes(fileName)) {
+    relativePath = path.join('sql', 'schema', fileName);
+  } else {
+    relativePath = path.join('sql', 'migrations', fileName);
+  }
+  const filePath = path.resolve(BACKEND_ROOT, relativePath);
   const raw = await fs.readFile(filePath, 'utf-8');
   const statements = splitSqlStatements(raw);
   for (const statement of statements) {

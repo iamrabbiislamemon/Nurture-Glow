@@ -82,21 +82,23 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-[40px] p-8 max-w-lg w-full shadow-2xl space-y-8 animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] relative pointer-events-auto"
+        className="bg-white rounded-[40px] p-8 max-w-lg w-full shadow-2xl space-y-8 animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] relative pointer-events-auto border border-amber-100"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Maternal Subscription</h2>
-            <p className="text-sm text-gray-400 font-medium">৳1,500 / month • Next delivery: Upcoming</p>
+            <h2 className="text-2xl font-bold text-gray-900 font-display">Maternal Subscription</h2>
+            <p className="text-sm text-gray-400 font-medium font-sans">৳1,500 / month • Next delivery: Upcoming</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
+          <button onClick={onClose} className="p-2 hover:bg-amber-50 rounded-full transition-colors cursor-pointer text-gray-400 hover:text-amber-700">
             <X size={24} />
           </button>
         </div>
 
-        <div className="bg-[#F7F5EF] p-6 rounded-[32px] space-y-4">
-          <h3 className="text-xs font-bold text-teal-700 uppercase tracking-widest flex items-center gap-2">
+        {/* Included Items */}
+        <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border border-amber-100 p-6 rounded-[32px] space-y-4">
+          <h3 className="text-xs font-bold text-emerald-700 uppercase tracking-widest flex items-center gap-2">
             <Sparkles size={14} /> Included in your box
           </h3>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -108,16 +110,18 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               "Monthly baby milestone card",
               "Priority clinic support"
             ].map((benefit, i) => (
-              <li key={i} className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                <CheckCircle2 size={14} className="text-teal-500" /> {benefit}
+              <li key={i} className="flex items-center gap-2 text-xs text-gray-600 font-medium font-sans">
+                <CheckCircle2 size={14} className="text-emerald-600 flex-shrink-0" /> {benefit}
               </li>
             ))}
           </ul>
         </div>
 
+        {/* Form Fields */}
         <div className="space-y-6">
+          {/* Trimester Select */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2 font-sans">
               <Box size={12} /> Current Trimester
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -126,10 +130,10 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                   key={t}
                   type="button"
                   onClick={() => setTrimester(t)}
-                  className={`py-3 rounded-2xl text-xs font-bold border-2 transition-all cursor-pointer ${
+                  className={`py-3 rounded-2xl text-xs font-bold border-2 transition-all cursor-pointer font-sans ${
                     trimester === t 
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-lg' 
-                      : 'bg-white border-gray-100 text-gray-400 hover:border-teal-100'
+                      ? 'bg-gradient-to-r from-emerald-700 to-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-700/20' 
+                      : 'bg-white border-amber-100 text-gray-500 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
                   {t} Trimester
@@ -138,8 +142,9 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             </div>
           </div>
 
+          {/* Address */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2 font-sans">
               <MapPin size={12} /> Delivery Address
             </label>
             <textarea
@@ -149,8 +154,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 if (e.target.value.trim().length >= 10) setAddressError(null);
               }}
               placeholder="House #, Road #, Area, City..."
-              className={`w-full h-24 p-4 bg-[#F7F5EF] rounded-2xl outline-none focus:ring-4 transition-all text-sm font-medium resize-none border-2 ${
-                addressError ? 'border-red-300 focus:ring-red-100' : 'border-transparent focus:ring-teal-100 focus:border-teal-200'
+              className={`w-full h-24 p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl outline-none focus:ring-4 transition-all text-sm font-medium resize-none border-2 font-sans ${
+                addressError ? 'border-red-300 focus:ring-red-100' : 'border-amber-100 focus:ring-amber-100 focus:border-amber-300'
               }`}
             />
             {addressError && (
@@ -160,14 +165,15 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             )}
           </div>
 
+          {/* Delivery Day */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4 flex items-center gap-2 font-sans">
               <Calendar size={12} /> Preferred Delivery Day
             </label>
             <select
               value={deliveryDay}
               onChange={(e) => setDeliveryDay(e.target.value)}
-              className="w-full p-4 bg-[#F7F5EF] rounded-2xl outline-none focus:ring-4 focus:ring-teal-100 border-2 border-transparent focus:border-teal-200 transition-all text-sm font-bold cursor-pointer"
+              className="w-full p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl outline-none focus:ring-4 focus:ring-amber-100 border-2 border-amber-100 focus:border-amber-300 transition-all text-sm font-bold cursor-pointer font-sans"
             >
               <option>Saturday</option>
               <option>Sunday</option>
@@ -177,14 +183,15 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
           </div>
         </div>
 
+        {/* Actions */}
         <div className="relative z-50 pointer-events-auto flex flex-col gap-3 pb-2">
           <button 
             type="button"
             onClick={handleConfirmSubscription}
-            className="w-full py-5 bg-[#E6C77A] text-white rounded-3xl font-bold shadow-xl shadow-[#E6C77A]/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer relative"
+            className="w-full py-5 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white rounded-3xl font-bold shadow-xl shadow-emerald-700/20 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer relative uppercase tracking-widest text-xs"
           >
             <Truck size={20} />
-            <span className="uppercase tracking-widest text-xs">
+            <span>
               {existingData ? 'Update Subscription' : 'Confirm Subscription'}
             </span>
           </button>
@@ -201,7 +208,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             </button>
           )}
 
-          <p className="text-[10px] text-center text-gray-400 font-medium">
+          <p className="text-[10px] text-center text-gray-400 font-medium font-sans">
             You can modify or cancel your subscription at any time.
           </p>
         </div>

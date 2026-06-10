@@ -1,4 +1,4 @@
-﻿
+
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -118,7 +118,7 @@ export const Assistant: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-[40px] shadow-lg border border-gray-100 overflow-hidden mb-8 p-8 flex flex-col h-[calc(100vh-120px)]">
+    <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden mb-8 p-8 flex flex-col h-[calc(100vh-120px)]">
       {showLive && <LiveAssistant onClose={() => setShowLive(false)} />}
       
       {/* Header Section */}
@@ -149,11 +149,11 @@ export const Assistant: React.FC = () => {
 
       {/* Chat Area */}
       <div className="mt-6 mb-4 flex-1 min-h-0">
-        <div className="h-full w-full bg-gradient-to-b from-[#FAFAFC]/30 to-[#F7F5EF]/20 rounded-[24px] border border-gray-100 overflow-hidden flex flex-col">
+        <div className="h-full w-full bg-gradient-to-b from-[#FAFAFC]/30 to-[#F7F5EF]/20 rounded-3xl border border-gray-100 overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 scroll-smooth">
           {chat.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-4 py-8">
-              <div className="w-20 h-20 bg-white rounded-[28px] shadow-md flex items-center justify-center text-[#E6C77A]">
+              <div className="w-20 h-20 bg-white rounded-3xl shadow-md flex items-center justify-center text-[#E6C77A]">
                 <Sparkles size={40} className="animate-pulse"/>
               </div>
               <div className="space-y-2">
@@ -176,7 +176,7 @@ export const Assistant: React.FC = () => {
 
           {chat.map((c, i) => (
             <div key={i} className={`flex ${c.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 duration-300`}>
-              <div className={`max-w-[75%] p-4 rounded-[24px] shadow-sm space-y-3 relative group ${c.role === 'user' ? 'bg-teal-600 text-white rounded-tr-lg' : 'bg-white text-gray-800 rounded-tl-lg border border-gray-100'}`}>
+              <div className={`max-w-[75%] p-4 rounded-3xl shadow-sm space-y-3 relative group ${c.role === 'user' ? 'bg-teal-600 text-white rounded-tr-lg' : 'bg-white text-gray-800 rounded-tl-lg border border-gray-100'}`}>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{c.text}</p>
 
                 {c.role === 'bot' && (c.modelUsed || c.intent || c.riskLevel) && (
@@ -247,7 +247,7 @@ export const Assistant: React.FC = () => {
           
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-gray-100 p-5 rounded-[28px] rounded-tl-none flex items-center gap-3">
+              <div className="bg-white border border-gray-100 p-5 rounded-3xl rounded-tl-none flex items-center gap-3">
                 <div className="flex gap-1">
                   <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce"></span>
                   <span className="w-1 h-1 bg-teal-500 rounded-full animate-bounce delay-150"></span>
@@ -270,7 +270,7 @@ export const Assistant: React.FC = () => {
             onChange={e => setMsg(e.target.value)} 
             onKeyDown={e => e.key === 'Enter' && handleSend()} 
             placeholder={t('ai.chatPlaceholder')} 
-            className="w-full bg-[#F7F5EF] border-2 border-transparent rounded-[28px] px-7 py-5 text-sm focus:bg-white focus:ring-4 focus:ring-[#BFE6DA]/20 focus:border-[#BFE6DA] transition-all outline-none shadow-inner" 
+            className="w-full bg-[#F7F5EF] border-2 border-transparent rounded-3xl px-7 py-5 text-sm focus:bg-white focus:ring-4 focus:ring-[#BFE6DA]/20 focus:border-[#BFE6DA] transition-all outline-none shadow-inner" 
           />        </div>
         <button 
           onClick={handleSend} 

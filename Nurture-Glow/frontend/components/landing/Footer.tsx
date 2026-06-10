@@ -15,8 +15,8 @@ const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <Logo />
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-gray-800 leading-tight">{t('footer.brandName')}</h1>
-                <span className="text-xl font-bold text-gray-800 leading-tight">{t('footer.brandTagline')}</span>
+                <h1 className="text-xl font-bold text-gray-800 leading-tight font-display">{t('footer.brandName')}</h1>
+                <span className="text-xl font-bold text-gray-800 leading-tight font-display">{t('footer.brandTagline')}</span>
               </div>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed">
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">{t('footer.platform')}</h4>
+            <h4 className="font-bold text-gray-900 mb-6 font-display">{t('footer.platform')}</h4>
             <ul className="space-y-4 text-sm text-gray-500">
               <li><Link to="/how-it-works" className="hover:text-[#E6C77A]">{t('footer.howItWorks')}</Link></li>
               <li><Link to="/features" className="hover:text-[#E6C77A]">{t('footer.features')}</Link></li>
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">{t('footer.support')}</h4>
+            <h4 className="font-bold text-gray-900 mb-6 font-display">{t('footer.support')}</h4>
             <ul className="space-y-4 text-sm text-gray-500">
               <li><Link to="/help-center" className="hover:text-[#E6C77A]">{t('footer.helpCenter')}</Link></li>
               <li><Link to="/privacy" className="hover:text-[#E6C77A]">{t('footer.privacy')}</Link></li>
@@ -50,18 +50,18 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-gray-900 mb-6">{t('footer.language')}</h4>
+            <h4 className="font-bold text-gray-900 mb-6 font-display">{t('footer.language')}</h4>
             <div className="flex flex-col gap-3">
               <button 
                 onClick={() => setLocale('en')}
                 aria-pressed={locale === 'en'}
                 className={`flex items-center justify-start gap-3 px-5 py-3 rounded-2xl text-sm font-bold transition-all border ${
                   locale === 'en' 
-                    ? 'bg-[#BFE6DA] border-[#BFE6DA] text-teal-900 shadow-sm scale-[1.02]' 
-                    : 'bg-white border-gray-100 text-gray-400 hover:border-[#BFE6DA] hover:text-teal-600'
+                    ? 'bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 text-emerald-900 shadow-sm scale-[1.02]' 
+                    : 'bg-white border-gray-100 text-gray-400 hover:border-amber-200 hover:text-amber-700'
                 }`}
               >
-                <div className={`p-1 rounded-lg ${locale === 'en' ? 'bg-white text-teal-600' : 'bg-gray-50 text-gray-300'}`}>
+                <div className={`p-1 rounded-lg ${locale === 'en' ? 'bg-white text-emerald-700' : 'bg-gray-50 text-gray-300'}`}>
                   <Globe size={16}/>
                 </div>
                 English
@@ -71,11 +71,11 @@ const Footer: React.FC = () => {
                 aria-pressed={locale === 'bn'}
                 className={`flex items-center justify-start gap-3 px-5 py-3 rounded-2xl text-sm font-bold transition-all border ${
                   locale === 'bn' 
-                    ? 'bg-[#BFE6DA] border-[#BFE6DA] text-teal-900 shadow-sm scale-[1.02]' 
-                    : 'bg-white border-gray-100 text-gray-400 hover:border-[#BFE6DA] hover:text-teal-600'
+                    ? 'bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 text-emerald-900 shadow-sm scale-[1.02]' 
+                    : 'bg-white border-gray-100 text-gray-400 hover:border-amber-200 hover:text-amber-700'
                 }`}
               >
-                <div className={`p-1 rounded-lg ${locale === 'bn' ? 'bg-white text-teal-600' : 'bg-gray-50 text-gray-300'}`}>
+                <div className={`p-1 rounded-lg ${locale === 'bn' ? 'bg-white text-emerald-700' : 'bg-gray-50 text-gray-300'}`}>
                   <Globe size={16}/>
                 </div>
                 বাংলা

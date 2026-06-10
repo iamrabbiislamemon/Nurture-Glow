@@ -10,7 +10,7 @@ declare module 'leaflet' {
   class Map {
     setView(center: [number, number], zoom?: number, options?: Record<string, any>): this;
     remove(): void;
-    fitBounds(bounds: any): this;
+    fitBounds(bounds: any, options?: any): this;
     [key: string]: any;
   }
 

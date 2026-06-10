@@ -9,7 +9,7 @@ export const LanguageSettings: React.FC = () => {
   const { locale, setLocale, t } = useTranslations();
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate(-1)}
@@ -23,11 +23,11 @@ export const LanguageSettings: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-4">
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
         {/* English Selection */}
         <div 
           onClick={() => setLocale('en')}
-          className={`flex items-center justify-between p-6 border transition-all rounded-[32px] cursor-pointer group ${
+          className={`flex items-center justify-between p-6 border transition-all rounded-3xl cursor-pointer group ${
             locale === 'en' ? 'bg-teal-50 border-teal-100' : 'bg-gray-50 border-transparent hover:bg-gray-100'
           }`}
         >
@@ -50,7 +50,7 @@ export const LanguageSettings: React.FC = () => {
         {/* Bengali Selection */}
         <div 
           onClick={() => setLocale('bn')}
-          className={`flex items-center justify-between p-6 border transition-all rounded-[32px] cursor-pointer group ${
+          className={`flex items-center justify-between p-6 border transition-all rounded-3xl cursor-pointer group ${
             locale === 'bn' ? 'bg-teal-50 border-teal-100' : 'bg-gray-50 border-transparent hover:bg-gray-100'
           }`}
         >
@@ -113,7 +113,7 @@ export const NotificationSettings: React.FC = () => {
   ] as const;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate(-1)}
@@ -127,11 +127,11 @@ export const NotificationSettings: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-4">
+      <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-4">
         {notificationItems.map((item) => {
           const isActive = channels[item.key];
           return (
-            <div key={item.key} className="flex items-center justify-between p-6 bg-gray-50 rounded-[32px] transition-all border-2 border-transparent">
+            <div key={item.key} className="flex items-center justify-between p-6 bg-gray-50 rounded-3xl transition-all border-2 border-transparent">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white rounded-2xl shadow-sm">{item.icon}</div>
                 <div>

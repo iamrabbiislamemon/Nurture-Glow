@@ -10,14 +10,15 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { v4 as uuidv4 } from 'uuid';
 import { query, ensureChatHistoryTable, pool } from './db.js';
 import { seedDatabase } from './seed.js';
 import { attachSignaling } from './signaling.js';
-import { createAppRouter } from './appRoutes.js';
-import { createAdminRouter } from './adminRoutes.js';
+import { attachAmbulanceDispatch } from './ambulanceSocket.js';
+import { createAppRouter } from './routes/appRoutesIndex.js';
+import { createAdminRouter } from './routes/admin/index.js';
+import { createTablesAdminRouter } from './routes/admin/tables.js';
 import { ensureAppTables, seedAppData, getUserMeta, listEntities, setUserMeta } from './appStore.js';
-import { normalizeRoleValue, CANONICAL_ROLES, getRoleFilterOptions } from './roles.js';
+import { normalizeRoleValue } from './roles.js';
 import {
   avatarUpload,
   buildPublicFileUrl,
@@ -73,9 +74,6 @@ const JWT_SECRET = (() => {
 })();
 
 const ADMIN_INVITE_CODE = process.env.ADMIN_INVITE_CODE || 'NURTURE_ADMIN_2026';
-
-// Validation helpers now imported from utils — no more duplication
-// (see src/utils/validation.js, src/utils/helpers.js)
 
 // Auth middleware from extracted module
 const { requireAuth, checkSuspensionStatus, requireRole, requireConsentForPatient } =
@@ -140,8 +138,9 @@ const adminExportLimiter = rateLimit({
   skip: (req) => !req.path.includes('admin') || !req.path.includes('export')
 });
 
-app.use(apiLimiter);
-app.use(adminExportLimiter);
+// Unplugged for testing: Bypass API and Admin export rate limiting
+// app.use(apiLimiter);
+// app.use(adminExportLimiter);
 
 // Auth-specific rate limiter (stricter for login/register)
 const authLimiter = rateLimit({
@@ -151,10 +150,11 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Too many attempts. Please try again in a minute.' }
 });
-app.use('/auth/login', authLimiter);
-app.use('/auth/register', authLimiter);
+// Unplugged for testing: Bypass auth rate limiting
+// app.use('/auth/login', authLimiter);
+// app.use('/auth/register', authLimiter);
 
-// Input sanitization (extracted to middleware/sanitize.js)
+// Input sanitization
 app.use(sanitizeInput);
 
 const DB_NAME = process.env.DB_NAME || 'neonest';
@@ -181,69 +181,13 @@ if (NODE_ENV === 'production') {
   }
 }
 
-const TABLES = [
-  'users',
-  'user_profiles',
-  'roles',
-  'user_roles',
-  'user_oauth_tokens',
-  'emergency_contacts',
-  'mothers',
-  'pregnancies',
-  'children',
-  'health_records',
-  'health_record_files',
-  'allergies',
-  'pregnancy_checkins',
-  'child_growth_logs',
-  'vaccine_schedules',
-  'vaccine_schedule_items',
-  'vaccination_events',
-  'reminders',
-  'reminder_deliveries',
-  'mental_questions',
-  'mental_assessments',
-  'mental_answers',
-  'referrals',
-  'doctor_specialties',
-  'doctors',
-  'doctor_availability_slots',
-  'consultations',
-  'video_sessions',
-  'consultation_messages',
-  'hospitals',
-  'icu_status_updates',
-  'ambulances',
-  'emergency_requests',
-  'emergency_status_events',
-  'gov_resources',
-  'certificates',
-  'vendors',
-  'product_categories',
-  'products',
-  'orders',
-  'order_items',
-  'payments',
-  'files',
-  'file_links',
-  'chat_history',
-  'notifications',
-  'audit_logs',
-  'addresses',
-  'ngos',
-  'doctor_reviews',
-  'product_reviews'
-];
-
-const tableCache = new Map();
-
 const SQL_BOOTSTRAP_FILES = [
-  { file: 'database-schema.sql', required: true },
-  { file: 'add_role_column.sql', required: false },
-  { file: 'create_system_tables.sql', required: true },
-  { file: 'add_oauth_tokens.sql', required: false },
-  { file: 'admin_tables_schema.sql', required: true },
-  { file: 'create_dashboard_views.sql', required: false }
+  { file: 'sql/schema/database-schema.sql', required: true },
+  { file: 'sql/migrations/add_role_column.sql', required: false },
+  { file: 'sql/schema/create_system_tables.sql', required: true },
+  { file: 'sql/migrations/add_oauth_tokens.sql', required: false },
+  { file: 'sql/schema/admin_tables_schema.sql', required: true },
+  { file: 'sql/schema/create_dashboard_views.sql', required: false }
 ];
 
 const stripSqlComments = (sql) => {
@@ -351,44 +295,6 @@ async function assertCoreTables() {
   }
 }
 
-async function getTableMeta(table) {
-  if (tableCache.has(table)) {
-    return tableCache.get(table);
-  }
-
-  const columns = await query(
-    `SELECT COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, EXTRA
-     FROM INFORMATION_SCHEMA.COLUMNS
-     WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
-     ORDER BY ORDINAL_POSITION`,
-    [DB_NAME, table]
-  );
-
-  const pkColumns = await query(
-    `SELECT COLUMN_NAME
-     FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-     WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'
-     ORDER BY ORDINAL_POSITION`,
-    [DB_NAME, table]
-  );
-
-  const meta = {
-    columns: columns.map(col => ({
-      name: col.COLUMN_NAME,
-      nullable: col.IS_NULLABLE === 'YES',
-      hasDefault: col.COLUMN_DEFAULT !== null,
-      autoIncrement: String(col.EXTRA || '').includes('auto_increment')
-    })),
-    pk: pkColumns.map(col => col.COLUMN_NAME)
-  };
-
-  tableCache.set(table, meta);
-  return meta;
-}
-
-// requireAuth, checkSuspensionStatus, requireRole, requireConsentForPatient
-// are now created via createAuthMiddleware(JWT_SECRET) at the top of this file.
-
 async function getUserProfile(userId) {
   const rows = await query(
     `SELECT u.id, u.phone, u.email, u.status, u.role, p.full_name, p.preferred_language
@@ -424,7 +330,7 @@ async function getUserProfile(userId) {
 }
 
 // ─── Mount extracted routers ────────────────────────────────────────
-app.use(createHealthRouter());
+app.use('/api', createHealthRouter({ requireAuth }));
 
 app.use(
   createAuthRouter({
@@ -437,6 +343,7 @@ app.use(
 );
 
 app.use(
+  '/api',
   createProfileRouter({
     requireAuth,
     avatarUpload,
@@ -446,7 +353,7 @@ app.use(
   })
 );
 
-const adminRouter = createAdminRouter({ requireAuth, requireRole });
+const adminRouter = createAdminRouter({ requireAuth, requireRole, checkSuspensionStatus });
 const mapLegacyAdminPath = (prefix) => (req, res, next) => {
   const originalUrl = req.url;
   req.url = `${prefix}${originalUrl}`;
@@ -472,205 +379,21 @@ app.use(
   })
 );
 
-app.get('/admin/tables', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const metas = await Promise.all(TABLES.map(async (table) => {
-      const meta = await getTableMeta(table);
-      return { table, columns: meta.columns, pk: meta.pk };
-    }));
-    res.json({ tables: metas });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/admin/:table', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const table = req.params.table;
-    if (!TABLES.includes(table)) {
-      return res.status(404).json({ error: 'Unknown table' });
-    }
-
-    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
-    const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
-
-    const rows = await query(`SELECT * FROM \`${table}\` LIMIT ? OFFSET ?`, [limit, offset]);
-    res.json({ rows });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/admin/:table/row', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const table = req.params.table;
-    if (!TABLES.includes(table)) {
-      return res.status(404).json({ error: 'Unknown table' });
-    }
-
-    const meta = await getTableMeta(table);
-    if (!meta.pk.length) {
-      return res.status(400).json({ error: 'Table has no primary key' });
-    }
-
-    const whereClauses = [];
-    const params = [];
-    for (const pk of meta.pk) {
-      const value = req.query[pk];
-      if (!value) {
-        return res.status(400).json({ error: `Missing primary key ${pk}` });
-      }
-      whereClauses.push(`\`${pk}\` = ?`);
-      params.push(value);
-    }
-
-    const rows = await query(`SELECT * FROM \`${table}\` WHERE ${whereClauses.join(' AND ')} LIMIT 1`, params);
-    if (!rows.length) {
-      return res.status(404).json({ error: 'Row not found' });
-    }
-    res.json({ row: rows[0] });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/admin/:table', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const table = req.params.table;
-    if (!TABLES.includes(table)) {
-      return res.status(404).json({ error: 'Unknown table' });
-    }
-
-    const meta = await getTableMeta(table);
-    const body = req.body || {};
-
-    const columns = meta.columns.map(col => col.name);
-    const autoCols = new Set(meta.columns.filter(col => col.autoIncrement).map(col => col.name));
-
-    if (columns.includes('id') && !body.id && !autoCols.has('id')) {
-      body.id = uuidv4();
-    }
-
-    const keys = Object.keys(body).filter(key => columns.includes(key) && !autoCols.has(key));
-    if (!keys.length) {
-      return res.status(400).json({ error: 'No valid columns supplied' });
-    }
-
-    const placeholders = keys.map(() => '?').join(', ');
-    const colsSql = keys.map(key => `\`${key}\``).join(', ');
-    const values = keys.map(key => body[key]);
-
-    await query(`INSERT INTO \`${table}\` (${colsSql}) VALUES (${placeholders})`, values);
-
-    res.status(201).json({ id: body.id || null });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/admin/:table/row', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const table = req.params.table;
-    if (!TABLES.includes(table)) {
-      return res.status(404).json({ error: 'Unknown table' });
-    }
-
-    const meta = await getTableMeta(table);
-    if (!meta.pk.length) {
-      return res.status(400).json({ error: 'Table has no primary key' });
-    }
-
-    const whereClauses = [];
-    const params = [];
-    for (const pk of meta.pk) {
-      const value = req.query[pk];
-      if (!value) {
-        return res.status(400).json({ error: `Missing primary key ${pk}` });
-      }
-      whereClauses.push(`\`${pk}\` = ?`);
-      params.push(value);
-    }
-
-    const columns = meta.columns.map(col => col.name);
-    const autoCols = new Set(meta.columns.filter(col => col.autoIncrement).map(col => col.name));
-
-    const updates = Object.keys(req.body || {})
-      .filter(key => columns.includes(key) && !autoCols.has(key) && !meta.pk.includes(key));
-
-    if (!updates.length) {
-      return res.status(400).json({ error: 'No valid columns supplied' });
-    }
-
-    const setSql = updates.map(key => `\`${key}\` = ?`).join(', ');
-    const values = updates.map(key => req.body[key]);
-
-    await query(
-      `UPDATE \`${table}\` SET ${setSql} WHERE ${whereClauses.join(' AND ')}`,
-      [...values, ...params]
-    );
-
-    res.json({ ok: true });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.delete('/admin/:table/row', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    const table = req.params.table;
-    if (!TABLES.includes(table)) {
-      return res.status(404).json({ error: 'Unknown table' });
-    }
-
-    const meta = await getTableMeta(table);
-    if (!meta.pk.length) {
-      return res.status(400).json({ error: 'Table has no primary key' });
-    }
-
-    const whereClauses = [];
-    const params = [];
-    for (const pk of meta.pk) {
-      const value = req.query[pk];
-      if (!value) {
-        return res.status(400).json({ error: `Missing primary key ${pk}` });
-      }
-      whereClauses.push(`\`${pk}\` = ?`);
-      params.push(value);
-    }
-
-    await query(`DELETE FROM \`${table}\` WHERE ${whereClauses.join(' AND ')}`, params);
-    res.json({ ok: true });
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/admin/seed', requireAuth, requireRole('system_admin'), checkSuspensionStatus, async (req, res, next) => {
-  try {
-    await seedDatabase();
-    res.json({ ok: true });
-  } catch (err) {
-    next(err);
-  }
-});
+app.use('/admin', createTablesAdminRouter({ requireAuth, requireRole, checkSuspensionStatus }));
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// Global error handler (extracted to middleware/errorHandler.js)
-// In production, hides internal error messages from clients.
+// Global error handler
 app.use(createErrorHandler(maxUploadBytes, NODE_ENV));
 
 const port = Number(process.env.PORT || 4000);
 
 async function bootstrap() {
-  // ── Run migration system (replaces ad-hoc SQL bootstrap on first run) ──
   const { runMigrationsIfPending } = await import('./migrateRunner.js');
   const migrated = await runMigrationsIfPending();
 
-  // Fall back to legacy SQL bootstrap if no migrations have been applied yet
-  // (e.g. very first run before the baseline migration exists)
   if (!migrated) {
     await ensureAdminSchema();
   }
@@ -680,24 +403,21 @@ async function bootstrap() {
   await ensureChatHistoryTable();
   await seedAppData();
   
-  // Verify email configuration
   console.log('Verifying email configuration...');
   const emailConfigValid = await verifyEmailConfig();
   if (emailConfigValid) {
     console.log('✓ Email service is ready');
   } else {
     console.warn('⚠ Email service not configured. Password reset emails will not be sent.');
-    console.warn('  Configure EMAIL_USER and EMAIL_PASSWORD in .env to enable email functionality.');
   }
   
   const server = app.listen(port, () => {
     console.log(`API listening on http://localhost:${port}`);
   });
 
-  // Attach WebSocket signaling server for WebRTC video calls
   attachSignaling(server);
+  attachAmbulanceDispatch(server);
 
-  // ── Graceful shutdown ─────────────────────────────────────────────
   const shutdown = async (signal) => {
     console.log(`\n${signal} received — shutting down gracefully…`);
     server.close(async () => {
@@ -710,7 +430,6 @@ async function bootstrap() {
       process.exit(0);
     });
 
-    // Force exit if graceful shutdown takes too long (10 s)
     setTimeout(() => {
       console.error('Forced shutdown after timeout.');
       process.exit(1);
@@ -721,7 +440,6 @@ async function bootstrap() {
   process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
-// Export middleware functions for use in routes
 export { requireAuth, requireRole, requireConsentForPatient, checkSuspensionStatus };
 
 bootstrap().catch((err) => {

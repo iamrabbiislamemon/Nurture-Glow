@@ -792,6 +792,103 @@ CREATE TABLE IF NOT EXISTS `health_id_verification_requests` (
 );
 
 -- =====================================================
+-- ADDITIONAL FEATURES SCHEMA (DBMS & CATALOG)
+-- =====================================================
+
+-- Subscription plans table
+CREATE TABLE IF NOT EXISTS `subscription_plans` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `plan_name` VARCHAR(100) NOT NULL,
+  `price` DECIMAL(10, 2) NOT NULL,
+  `currency` VARCHAR(10) DEFAULT 'BDT',
+  `billing_cycle` VARCHAR(50) DEFAULT 'monthly',
+  `features` JSON,
+  `is_featured` BOOLEAN DEFAULT FALSE,
+  `is_popular` BOOLEAN DEFAULT FALSE,
+  `badge_text` VARCHAR(50),
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `sort_order` INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- FAQs table
+CREATE TABLE IF NOT EXISTS `faqs` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `question` TEXT NOT NULL,
+  `answer` TEXT NOT NULL,
+  `category` VARCHAR(50),
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `sort_order` INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Nutrition goals table
+CREATE TABLE IF NOT EXISTS `nutrition_goals` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` VARCHAR(36) NULL,
+  `calorie_goal` INT DEFAULT 2200,
+  `protein_goal` INT DEFAULT 75,
+  `carbs_goal` INT DEFAULT 180,
+  `fat_goal` INT DEFAULT 60,
+  `water_goal` INT DEFAULT 10,
+  `is_default` BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Pregnancy week info table
+CREATE TABLE IF NOT EXISTS `pregnancy_week_info` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `trimester` INT NOT NULL,
+  `min_week` INT NOT NULL,
+  `max_week` INT NOT NULL,
+  `stage_name` VARCHAR(100) NOT NULL,
+  `baby_size` VARCHAR(100) NOT NULL,
+  `description` TEXT NOT NULL,
+  `nutrients` JSON,
+  `symptoms` JSON
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Pregnancy myths table
+CREATE TABLE IF NOT EXISTS `pregnancy_myths` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `locale` VARCHAR(10) NOT NULL,
+  `myth_keyword` VARCHAR(255) NOT NULL,
+  `claim` TEXT NOT NULL,
+  `verdict` VARCHAR(50) NOT NULL,
+  `explanation` TEXT NOT NULL,
+  `safe_advice` JSON,
+  `when_to_call_doctor` JSON,
+  `sources_label` VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Vaccine catalog table
+CREATE TABLE IF NOT EXISTS `vaccine_catalog` (
+  `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+  `vaccine_name` VARCHAR(255) NOT NULL,
+  `description` LONGTEXT,
+  `recommended_week_start` INT NULL,
+  `recommended_week_end` INT NULL,
+  `is_required` BOOLEAN DEFAULT TRUE,
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_vaccine_catalog_active` (`is_active`),
+  INDEX `idx_vaccine_catalog_week` (`recommended_week_start`, `recommended_week_end`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Vaccine suggestions table
+CREATE TABLE IF NOT EXISTS `vaccine_suggestions` (
+  `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+  `week_start` INT NOT NULL,
+  `week_end` INT NOT NULL,
+  `vaccine_names` LONGTEXT NOT NULL,
+  `description` LONGTEXT,
+  `is_active` BOOLEAN DEFAULT TRUE,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_vaccine_suggestions_active` (`is_active`),
+  INDEX `idx_vaccine_suggestions_week` (`week_start`, `week_end`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- =====================================================
 -- SYSTEM INDEXES & PERFORMANCE OPTIMIZATION
 -- =====================================================
 

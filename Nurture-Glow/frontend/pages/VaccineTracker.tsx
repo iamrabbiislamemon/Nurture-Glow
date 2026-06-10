@@ -468,7 +468,7 @@ const VaccineTracker: React.FC = () => {
      ═══════════════════════════════════════════════════════ */
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-6 animate-in fade-in duration-500 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-6 animate-in fade-in duration-500 pb-20">
 
       {/* ══════════ Completion Toast ══════════ */}
       {completionToast && (
@@ -514,7 +514,7 @@ const VaccineTracker: React.FC = () => {
       </div>
 
       {/* ══════════ Progress Section ══════════ */}
-      <div className="bg-white rounded-[28px] border border-gray-100 p-6 shadow-sm">
+      <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Circular Progress */}
           <div className="relative w-32 h-32 flex-shrink-0">
@@ -798,7 +798,7 @@ const VaccineTracker: React.FC = () => {
       {/* ══════════ Vaccine Groups ══════════ */}
       <div className="space-y-4">
         {groupedFiltered.length === 0 ? (
-          <div className="py-16 text-center bg-white rounded-[28px] border border-dashed border-gray-200">
+          <div className="py-16 text-center bg-white rounded-3xl border border-dashed border-gray-200">
             <Search size={40} className="mx-auto mb-4 text-gray-200" />
             <p className="text-gray-400 font-medium">No vaccines match your filters.</p>
             <button

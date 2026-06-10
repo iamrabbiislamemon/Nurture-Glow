@@ -48,7 +48,7 @@ const Hero: React.FC = () => {
           {/* Main Headline */}
           <div className={locale === 'bn' ? 'flex items-center gap-2' : 'space-y-2'}>
             <h1 
-              className={`text-6xl md:text-7xl font-bold leading-tight tracking-tight animate-hero-content whitespace-nowrap ${
+              className={`text-6xl md:text-7xl font-bold leading-tight tracking-tight animate-hero-content whitespace-nowrap font-display ${
                 locale === 'bn' ? 'text-emerald-800' : 'text-gray-900'
               }`}
               style={{ animationDelay: '0.4s' }}
@@ -56,7 +56,7 @@ const Hero: React.FC = () => {
               {t('landing.hero.title')}
             </h1>
             <h2 
-              className={`text-6xl md:text-7xl font-bold leading-tight tracking-tight animate-hero-content whitespace-nowrap ${
+              className={`text-6xl md:text-7xl font-bold leading-tight tracking-tight animate-hero-content whitespace-nowrap font-display ${
                 locale === 'bn' ? 'text-emerald-800' : 'bg-gradient-to-r from-emerald-700 to-emerald-600 bg-clip-text text-transparent'
               }`}
               style={{ animationDelay: '0.6s' }}

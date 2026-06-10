@@ -108,9 +108,9 @@ const Myths: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-12 animate-in fade-in duration-500 pb-24">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
       <div className="text-center space-y-4">
-        <div className="w-20 h-20 bg-[#E6C77A]/20 text-[#D4B56A] rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-inner animate-pulse">
+        <div className="w-20 h-20 bg-[#E6C77A]/20 text-[#D4B56A] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner animate-pulse">
           <Zap size={40} />
         </div>
         <h1 className="text-4xl font-serif font-bold text-gray-900 tracking-tight">Health Myth Buster</h1>
@@ -119,7 +119,7 @@ const Myths: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-white p-10 rounded-[48px] shadow-sm border border-gray-100 space-y-8 relative overflow-hidden">
+      <div className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 space-y-8 relative overflow-hidden">
         <div className="space-y-4 relative z-10">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-6">Statement to verify</label>
           <div className="relative group">
@@ -127,7 +127,7 @@ const Myths: React.FC = () => {
               value={statement}
               onChange={e => setStatement(e.target.value)}
               placeholder={t('ai.mythPaste')}
-              className="w-full h-40 p-8 bg-[#F7F5EF] rounded-[40px] outline-none border-2 border-transparent focus:bg-white focus:border-[#BFE6DA] focus:ring-8 focus:ring-[#BFE6DA]/5 transition-all text-lg font-medium shadow-inner resize-none"
+              className="w-full h-40 p-8 bg-[#F7F5EF] rounded-3xl outline-none border-2 border-transparent focus:bg-white focus:border-[#BFE6DA] focus:ring-8 focus:ring-[#BFE6DA]/5 transition-all text-lg font-medium shadow-inner resize-none"
             />
             {statement && (
               <button 
@@ -144,7 +144,7 @@ const Myths: React.FC = () => {
           <button 
             onClick={handleCheck}
             disabled={loading || !statement.trim()}
-            className="flex-1 py-6 bg-[#E6C77A] text-white rounded-[32px] font-bold shadow-2xl shadow-[#E6C77A]/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+            className="flex-1 py-6 bg-[#E6C77A] text-white rounded-xl font-bold shadow-2xl shadow-[#E6C77A]/20 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
             {loading ? <RefreshCw className="animate-spin" size={24}/> : <><Sparkles size={24}/> {t('ai.mythCheck')}</>}
           </button>
@@ -152,7 +152,7 @@ const Myths: React.FC = () => {
           {result && (
             <button 
               onClick={handleReset}
-              className="px-8 py-6 bg-gray-50 text-gray-400 rounded-[32px] font-bold hover:bg-gray-100 transition-all active:scale-95"
+              className="px-8 py-6 bg-gray-50 text-gray-400 rounded-xl font-bold hover:bg-gray-100 transition-all active:scale-95"
             >
               Reset
             </button>
@@ -162,7 +162,7 @@ const Myths: React.FC = () => {
         {result && !loading && (
           <div className="space-y-8 animate-in slide-in-from-top-6 duration-500">
             {/* Main Result Card */}
-            <div className={`p-10 rounded-[48px] border-2 space-y-6 ${result.verdict === 'True' ? 'bg-green-50 border-green-100' : result.verdict === 'False' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100'}`}>
+            <div className={`p-10 rounded-3xl border-2 space-y-6 ${result.verdict === 'True' ? 'bg-green-50 border-green-100' : result.verdict === 'False' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100'}`}>
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-4">
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white ${verdictColors[result.verdict].bg}`}>
@@ -192,7 +192,7 @@ const Myths: React.FC = () => {
 
             {/* Advice Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-teal-50/50 p-8 rounded-[40px] border border-teal-100/50 space-y-4">
+              <div className="bg-teal-50/50 p-8 rounded-3xl border border-teal-100/50 space-y-4">
                 <div className="flex items-center gap-3 text-teal-700 font-bold uppercase tracking-widest text-xs">
                   <ShieldCheck size={18} /> Safe Advice
                 </div>
@@ -206,7 +206,7 @@ const Myths: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="bg-orange-50/50 p-8 rounded-[40px] border border-orange-100/50 space-y-4">
+              <div className="bg-orange-50/50 p-8 rounded-3xl border border-orange-100/50 space-y-4">
                 <div className="flex items-center gap-3 text-orange-700 font-bold uppercase tracking-widest text-xs">
                   <Stethoscope size={18} /> Clinical Warning
                 </div>
@@ -238,7 +238,7 @@ const Myths: React.FC = () => {
           <div 
             key={i} 
             onClick={() => setStatement(item.q)}
-            className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 flex gap-6 hover:border-[#BFE6DA] cursor-pointer transition-all hover:translate-y-[-4px] group"
+            className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex gap-6 hover:border-[#BFE6DA] cursor-pointer transition-all hover:translate-y-[-4px] group"
           >
             <div className="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 shrink-0 group-hover:scale-110 transition-transform">
               <HelpCircle size={24}/>

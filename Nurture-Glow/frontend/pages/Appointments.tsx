@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Calendar as CalendarIcon, Clock, Video, MapPin, User, ChevronLeft, ChevronRight, 
   CheckCircle2, XCircle, Search, Globe, AlertCircle, Info, ChevronDown, Trash2, Star
@@ -392,7 +392,7 @@ const Appointments: React.FC = () => {
       {/* Cancel Confirmation Modal */}
       {cancelConfirmId && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
                <AlertCircle size={32} />
             </div>
@@ -440,7 +440,7 @@ const Appointments: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Sidebar: Calendar */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100 space-y-6">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-gray-800 flex items-center gap-2">
                 <CalendarIcon size={18} className="text-[#E6C77A]" /> Select Date
@@ -522,7 +522,7 @@ const Appointments: React.FC = () => {
         <div className="lg:col-span-8 space-y-6">
           {activeTab !== 'my' ? (
             filteredDoctors.length === 0 ? (
-              <div className="bg-white p-16 rounded-[40px] text-center border-2 border-dashed border-gray-100 space-y-4 animate-in fade-in col-span-full">
+              <div className="bg-white p-16 rounded-3xl text-center border-2 border-dashed border-gray-100 space-y-4 animate-in fade-in col-span-full">
                 <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-200">
                   <User size={32} />
                 </div>
@@ -532,7 +532,7 @@ const Appointments: React.FC = () => {
             ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredDoctors.map(doc => (
-                <div key={doc.id} className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 hover:border-[#BFE6DA] transition-all group">
+                <div key={doc.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:border-[#BFE6DA] transition-all group">
                   <div className="flex gap-4 mb-6">
                   {doc.image ? (
                     <img src={doc.image} loading="lazy" className="w-20 h-20 rounded-2xl object-cover ring-4 ring-gray-50" alt={doc.name} />
@@ -638,7 +638,7 @@ const Appointments: React.FC = () => {
                     </div>
 
                     {activeList.length === 0 ? (
-                      <div className="bg-white p-16 rounded-[40px] text-center border-2 border-dashed border-gray-100 space-y-4 animate-in fade-in">
+                      <div className="bg-white p-16 rounded-3xl text-center border-2 border-dashed border-gray-100 space-y-4 animate-in fade-in">
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-200">
                           <CalendarIcon size={32} />
                         </div>
@@ -699,7 +699,7 @@ const Appointments: React.FC = () => {
                             : 'border-red-100';
 
                           return (
-                            <div key={app.id} className={`bg-white p-5 rounded-[28px] shadow-sm border ${cardBorder} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all animate-in slide-in-from-bottom-2`}>
+                            <div key={app.id} className={`bg-white p-5 rounded-3xl shadow-sm border ${cardBorder} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all animate-in slide-in-from-bottom-2`}>
                               <div className="flex items-center gap-4 w-full md:w-auto">
                                 <div className={`p-3 rounded-2xl ${iconClass} flex-shrink-0`}>
                                   {app.type === 'Online' ? <Video size={22} /> : <CalendarIcon size={22} />}
@@ -779,7 +779,7 @@ const Appointments: React.FC = () => {
 
       {reviewingAppointment && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white w-full max-w-lg rounded-[40px] p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Rate Doctor</h2>
               <button onClick={() => setReviewingAppointment(null)} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"><XCircle size={24} /></button>
@@ -836,7 +836,7 @@ const Appointments: React.FC = () => {
       {/* Booking Modal */}
       {isModalOpen && selectedDoctor && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white w-full max-w-lg rounded-[40px] p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold text-gray-800">Book Visit</h2>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"><XCircle size={24}/></button>

@@ -151,7 +151,7 @@ const Health: React.FC = () => {
             <div 
               key={idx} 
               id={m.id}
-              className={`bg-white rounded-[40px] shadow-sm border overflow-hidden flex flex-col transition-all duration-500 ${
+              className={`bg-white rounded-3xl shadow-sm border overflow-hidden flex flex-col transition-all duration-500 ${
                 isHighlighted ? 'ring-4 ring-teal-500/20 border-teal-500 scale-[1.02]' : 'border-gray-100'
               }`}
             >
@@ -203,7 +203,7 @@ const Health: React.FC = () => {
         })}
       </div>
 
-      <div className="bg-teal-900 text-white p-10 rounded-[48px] shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center gap-10">
+      <div className="bg-teal-900 text-white p-10 rounded-3xl shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center gap-10">
         <div className="relative z-10 flex-1 space-y-4">
           <h3 className="text-3xl font-serif font-bold italic">{t('health.monitoring')}</h3>
           <p className="text-teal-200 font-light leading-relaxed max-w-lg">
@@ -226,7 +226,7 @@ const Health: React.FC = () => {
       {/* Manual Entry Modal */}
       {showModal && activeMetric && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-sm rounded-[40px] p-10 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+          <div className="bg-white w-full max-w-sm rounded-3xl p-10 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">{t('health.addValue', { label: activeMetric.label })}</h2>
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">

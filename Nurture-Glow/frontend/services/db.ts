@@ -511,6 +511,15 @@ export const db = {
       upcomingAppointments: 0,
       healthSummaryMetrics: []
     };
+  },
+
+  async triggerEmergencyAlert(userId: string, details?: { message?: string; location?: any }) {
+    const res = await apiFetch<any>('/api/emergency/trigger', {
+      method: 'POST',
+      body: JSON.stringify({ userId, ...details })
+    });
+    dispatchUpdate();
+    return res;
   }
 };
 

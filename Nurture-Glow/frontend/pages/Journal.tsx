@@ -134,10 +134,10 @@ const Journal: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 pb-20 relative text-[#3C342B]">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 pb-20 relative animate-in fade-in duration-500">
       {/* Toast Notifications */}
       {toast && (
-        <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-2xl shadow-lg flex items-center gap-3 ${toast.type === 'success' ? 'bg-[#4A5A4A] text-[#F7F4EE]' : 'bg-[#7C3F3F] text-[#F7F4EE]'}`}>
+        <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 duration-300 ${toast.type === 'success' ? 'bg-teal-600 text-white' : 'bg-red-600 text-white'}`}>
           {toast.type === 'success' ? <CheckCircle2 size={18}/> : <AlertTriangle size={18}/>}
           <span className="text-sm font-bold">{toast.message}</span>
         </div>
@@ -145,25 +145,25 @@ const Journal: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-[#FCFAF6] rounded-3xl p-8 max-w-sm w-full shadow-xl space-y-6 text-center border border-[#E4D9C7]">
-            <div className="w-16 h-16 bg-[#F3E6E6] text-[#7C3F3F] rounded-full flex items-center justify-center mx-auto">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <AlertTriangle size={32}/>
             </div>
             <div>
-              <h3 className="text-xl font-serif font-semibold text-[#2F2A23]">{t('journal.confirmDelete')}</h3>
-              <p className="text-sm text-[#6B6257] mt-2">Are you sure you want to delete this journal entry?</p>
+              <h3 className="text-xl font-bold text-gray-900">{t('journal.confirmDelete')}</h3>
+              <p className="text-sm text-gray-500 mt-2">Are you sure you want to delete this journal entry?</p>
             </div>
             <div className="flex gap-3">
               <button 
                 onClick={() => setDeleteConfirmId(null)} 
-                className="flex-1 py-3 bg-[#F3EFE7] text-[#6B6257] rounded-2xl font-semibold hover:bg-[#EDE5D8] transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-[#E4D9C7]"
+                className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all cursor-pointer"
               >
                 {t('common.cancel')}
               </button>
               <button 
                 onClick={handleDeleteConfirm} 
-                className="flex-1 py-3 bg-[#7C3F3F] text-[#F7F4EE] rounded-2xl font-semibold hover:bg-[#6B3434] transition-colors shadow-sm cursor-pointer outline-none focus:ring-2 focus:ring-[#BFA8A8]"
+                className="flex-1 py-3 bg-red-500 text-white rounded-2xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-200 cursor-pointer"
               >
                 Delete
               </button>
@@ -174,13 +174,13 @@ const Journal: React.FC = () => {
 
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-serif font-semibold text-[#2F2A23]">{t('journal.title')}</h1>
-          <p className="text-[#6B6257]">{t('journal.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('journal.title')}</h1>
+          <p className="text-gray-500">{t('journal.subtitle')}</p>
         </div>
         {!isWriting && !editingEntryId && (
           <button 
             onClick={() => setIsWriting(true)}
-            className="flex items-center gap-2 px-8 py-4 bg-[#4A5A4A] text-[#F7F4EE] rounded-2xl font-semibold shadow-sm hover:bg-[#3E4C3E] transition-colors"
+            className="flex items-center gap-2 px-8 py-4 bg-teal-600 text-white rounded-2xl font-bold shadow-md hover:bg-teal-700 transition-all"
           >
             <Edit3 size={20}/> {t('journal.newEntry')}
           </button>
@@ -188,20 +188,20 @@ const Journal: React.FC = () => {
       </div>
 
       {isWriting && (
-        <div className="bg-[#FCFAF6] p-8 rounded-3xl shadow-sm border border-[#E4D9C7] space-y-8">
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-8">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-[#EDE5D8] rounded-full flex items-center justify-center text-[#5C5247] font-semibold shrink-0 border border-[#E4D9C7] shadow-inner">
+            <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 font-bold shrink-0 border border-teal-100">
               {user?.name?.[0] || 'Y'}
             </div>
             <div className="flex-1 space-y-6">
               <input 
-                className="w-full text-2xl font-serif font-semibold text-[#2F2A23] bg-transparent outline-none placeholder:text-[#C3B7A6]" 
+                className="w-full text-2xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-gray-300" 
                 placeholder={t('journal.entryTitle')} 
                 value={newEntry.title}
                 onChange={e => setNewEntry({...newEntry, title: e.target.value})}
               />
               <textarea 
-                className="w-full h-56 p-8 bg-[#F3EFE7] rounded-2xl outline-none border border-[#E4D9C7] focus:ring-2 focus:ring-[#C4AE83]/30 focus:border-[#C4AE83] resize-none text-lg font-medium text-[#3B352E] shadow-inner" 
+                className="w-full h-56 p-8 bg-gray-50 rounded-2xl outline-none border border-gray-200 focus:ring-2 focus:ring-teal-100 focus:border-teal-300 resize-none text-lg font-medium text-gray-800" 
                 placeholder={t('journal.placeholder')}
                 value={newEntry.content}
                 onChange={e => setNewEntry({...newEntry, content: e.target.value})}
@@ -212,13 +212,13 @@ const Journal: React.FC = () => {
           {attachments.length > 0 && (
             <div className="flex flex-wrap gap-4">
               {attachments.map((at, i) => (
-                <div key={i} className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-sm group border border-[#E4D9C7] bg-[#F7F3EC]">
+                <div key={i} className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-sm group border border-gray-200 bg-gray-50">
                   {at.type?.startsWith('image') ? (
                     <img src={at.url} loading="lazy" className="w-full h-full object-cover" alt={at.name} />
                   ) : (
-                    <div className="w-full h-full bg-[#F3EFE7] flex flex-col items-center justify-center p-2 text-center">
-                      <FileText size={24} className="text-[#8C8174]" />
-                      <span className="text-[8px] mt-1 line-clamp-1 text-[#6B6257]">{at.name}</span>
+                    <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center p-2 text-center">
+                      <FileText size={24} className="text-gray-400" />
+                      <span className="text-[8px] mt-1 line-clamp-1 text-gray-500">{at.name}</span>
                     </div>
                   )}
                   <button 
@@ -232,17 +232,17 @@ const Journal: React.FC = () => {
             </div>
           )}
 
-          <div className="flex justify-between items-center pt-8 border-t border-[#E4D9C7]">
+          <div className="flex justify-between items-center pt-8 border-t border-gray-100">
             <div className="flex gap-4">
-              <button onClick={() => fileRef.current?.click()} className="p-4 bg-[#F3EFE7] text-[#7A6F64] hover:text-[#4A5A4A] hover:bg-[#EDE5D8] rounded-2xl transition-colors cursor-pointer"><ImagePlus size={24}/></button>
+              <button onClick={() => fileRef.current?.click()} className="p-4 bg-gray-100 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-2xl transition-all cursor-pointer"><ImagePlus size={24}/></button>
               <input type="file" ref={fileRef} className="hidden" multiple onChange={handleUpload} />
             </div>
             <div className="flex gap-4">
-              <button onClick={() => setIsWriting(false)} className="px-8 py-4 text-[#7A6F64] font-semibold hover:text-[#5C5247] transition-colors cursor-pointer">{t('journal.cancel')}</button>
+              <button onClick={() => setIsWriting(false)} className="px-8 py-4 text-gray-500 font-bold hover:text-gray-700 transition-colors cursor-pointer">{t('journal.cancel')}</button>
               <button 
                 onClick={handleSave}
                 disabled={saving || !newEntry.content.trim()}
-                className="px-10 py-4 bg-[#C4AE83] text-[#2B241C] rounded-2xl font-semibold shadow-sm flex items-center gap-2 hover:bg-[#B79F72] transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-10 py-4 bg-teal-600 text-white rounded-2xl font-bold shadow-md flex items-center gap-2 hover:bg-teal-700 transition-all disabled:opacity-50 cursor-pointer"
               >
                 <Save size={20}/> {t('journal.save')}
               </button>
@@ -253,9 +253,9 @@ const Journal: React.FC = () => {
 
       <div className="space-y-6">
         {entries.length === 0 ? (
-          <div className="bg-[#FCFAF6] p-16 rounded-3xl text-center border border-dashed border-[#E4D9C7]">
-             <BookOpen className="mx-auto text-[#D6C8B5] mb-4" size={64} />
-             <p className="text-[#7A6F64] font-medium text-lg">{t('journal.empty')}</p>
+          <div className="bg-white p-16 rounded-3xl text-center border-2 border-dashed border-gray-200">
+             <BookOpen className="mx-auto text-gray-300 mb-4" size={64} />
+             <p className="text-gray-400 font-medium text-lg">{t('journal.empty')}</p>
           </div>
         ) : (
           entries.map(entry => {
@@ -263,16 +263,16 @@ const Journal: React.FC = () => {
             const fileAttachments = (entry.attachments || []).filter((at) => !at.type?.startsWith('image'));
 
             return (
-              <div key={entry.id} className="bg-[#FCFAF6] rounded-3xl shadow-sm border border-[#E4D9C7] overflow-hidden relative">
+              <div key={entry.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative">
                 <div className="p-8 space-y-6">
                   <div className="flex justify-between items-start">
                     <div className="flex gap-4 items-center">
-                      <div className="w-10 h-10 bg-[#EDE5D8] rounded-full flex items-center justify-center text-[#5C5247] font-semibold text-sm border border-[#E4D9C7]">
+                      <div className="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center text-teal-600 font-bold text-sm border border-teal-100">
                         {user?.name?.[0] || 'Y'}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#2F2A23]">{t('community.you')}</h4>
-                        <p className="text-[10px] text-[#9A8F82] font-semibold uppercase tracking-widest">
+                        <h4 className="font-bold text-gray-800">{t('community.you')}</h4>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                           {new Date(entry.date).toLocaleString()}
                         </p>
                       </div>
@@ -280,14 +280,14 @@ const Journal: React.FC = () => {
                     <div className="flex gap-2">
                       <button 
                         onClick={() => startEdit(entry)} 
-                        className="p-2 text-[#9A8F82] hover:text-[#4A5A4A] hover:bg-[#EDE5D8] rounded-xl transition-colors cursor-pointer"
+                        className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer"
                         title={t('journal.edit')}
                       >
                         <Edit3 size={18}/>
                       </button>
                       <button 
                         onClick={() => setDeleteConfirmId(entry.id)} 
-                        className="p-2 text-[#9A8F82] hover:text-[#7C3F3F] hover:bg-[#F3E6E6] rounded-xl transition-colors cursor-pointer"
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer"
                         title="Delete Entry"
                       >
                         <Trash2 size={18}/>
@@ -298,13 +298,13 @@ const Journal: React.FC = () => {
                   {editingEntryId === entry.id ? (
                     <div className="space-y-6">
                       <input 
-                        className="w-full text-2xl font-serif font-semibold text-[#2F2A23] bg-transparent outline-none placeholder:text-[#C3B7A6]" 
+                        className="w-full text-2xl font-bold text-gray-900 bg-transparent outline-none placeholder:text-gray-300" 
                         placeholder={t('journal.entryTitle')} 
                         value={editEntry.title}
                         onChange={e => setEditEntry({...editEntry, title: e.target.value})}
                       />
                       <textarea 
-                        className="w-full h-52 p-6 bg-[#F3EFE7] rounded-2xl outline-none border border-[#E4D9C7] focus:ring-2 focus:ring-[#C4AE83]/30 focus:border-[#C4AE83] resize-none text-lg font-medium text-[#3B352E] shadow-inner" 
+                        className="w-full h-52 p-6 bg-gray-50 rounded-2xl outline-none border border-gray-200 focus:ring-2 focus:ring-teal-100 focus:border-teal-300 resize-none text-lg font-medium text-gray-800" 
                         placeholder={t('journal.placeholder')}
                         value={editEntry.content}
                         onChange={e => setEditEntry({...editEntry, content: e.target.value})}
@@ -313,13 +313,13 @@ const Journal: React.FC = () => {
                       {editAttachments.length > 0 && (
                         <div className="flex flex-wrap gap-4">
                           {editAttachments.map((at, i) => (
-                            <div key={i} className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-sm group border border-[#E4D9C7] bg-[#F7F3EC]">
+                            <div key={i} className="relative w-28 h-28 rounded-2xl overflow-hidden shadow-sm group border border-gray-200 bg-gray-50">
                               {at.type?.startsWith('image') ? (
                                 <img src={at.url} loading="lazy" className="w-full h-full object-cover" alt={at.name} />
                               ) : (
-                                <div className="w-full h-full bg-[#F3EFE7] flex flex-col items-center justify-center p-2 text-center">
-                                  <FileText size={24} className="text-[#8C8174]" />
-                                  <span className="text-[8px] mt-1 line-clamp-1 text-[#6B6257]">{at.name}</span>
+                                <div className="w-full h-full bg-gray-50 flex flex-col items-center justify-center p-2 text-center">
+                                  <FileText size={24} className="text-gray-400" />
+                                  <span className="text-[8px] mt-1 line-clamp-1 text-gray-500">{at.name}</span>
                                 </div>
                               )}
                               <button 
@@ -333,17 +333,17 @@ const Journal: React.FC = () => {
                         </div>
                       )}
 
-                      <div className="flex justify-between items-center pt-6 border-t border-[#E4D9C7]">
+                      <div className="flex justify-between items-center pt-6 border-t border-gray-100">
                         <div className="flex gap-4">
-                          <button onClick={() => editFileRef.current?.click()} className="p-4 bg-[#F3EFE7] text-[#7A6F64] hover:text-[#4A5A4A] hover:bg-[#EDE5D8] rounded-2xl transition-colors cursor-pointer"><ImagePlus size={24}/></button>
+                          <button onClick={() => editFileRef.current?.click()} className="p-4 bg-gray-100 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-2xl transition-all cursor-pointer"><ImagePlus size={24}/></button>
                           <input type="file" ref={editFileRef} className="hidden" multiple onChange={handleEditUpload} />
                         </div>
                         <div className="flex gap-4">
-                          <button onClick={cancelEdit} className="px-8 py-4 text-[#7A6F64] font-semibold hover:text-[#5C5247] transition-colors cursor-pointer">{t('journal.cancel')}</button>
+                          <button onClick={cancelEdit} className="px-8 py-4 text-gray-500 font-bold hover:text-gray-700 transition-colors cursor-pointer">{t('journal.cancel')}</button>
                           <button 
                             onClick={handleUpdate}
                             disabled={updating || !editEntry.content.trim()}
-                            className="px-10 py-4 bg-[#C4AE83] text-[#2B241C] rounded-2xl font-semibold shadow-sm flex items-center gap-2 hover:bg-[#B79F72] transition-colors disabled:opacity-50 cursor-pointer"
+                            className="px-10 py-4 bg-teal-600 text-white rounded-2xl font-bold shadow-md flex items-center gap-2 hover:bg-teal-700 transition-all disabled:opacity-50 cursor-pointer"
                           >
                             <Save size={20}/> {t('journal.update')}
                           </button>
@@ -353,14 +353,14 @@ const Journal: React.FC = () => {
                   ) : (
                     <>
                       <div className="space-y-2">
-                        <h3 className="text-2xl font-serif font-semibold text-[#2F2A23]">{entry.title || t('journal.untitled')}</h3>
-                        <p className="text-[#3B352E] leading-relaxed text-lg font-medium whitespace-pre-line">{entry.content}</p>
+                        <h3 className="text-2xl font-bold text-gray-900">{entry.title || t('journal.untitled')}</h3>
+                        <p className="text-gray-700 leading-relaxed text-lg font-medium whitespace-pre-line">{entry.content}</p>
                       </div>
 
                       {imageAttachments.length > 0 && (
                         <div className={`grid ${imageAttachments.length === 1 ? 'grid-cols-1' : imageAttachments.length === 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} gap-4`}>
                           {imageAttachments.map((at, i) => (
-                            <div key={i} className="relative overflow-hidden rounded-2xl border border-[#E4D9C7] bg-[#F7F3EC] aspect-[4/3]">
+                            <div key={i} className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 aspect-[4/3]">
                               <img
                                 src={at.url}
                                 className="absolute inset-0 w-full h-full object-cover"
@@ -375,7 +375,7 @@ const Journal: React.FC = () => {
                       {fileAttachments.length > 0 && (
                         <div className="flex flex-wrap gap-3">
                           {fileAttachments.map((at, i) => (
-                            <div key={i} className="w-28 h-28 bg-[#F3EFE7] rounded-2xl flex flex-col items-center justify-center text-[#6B6257] border border-[#E4D9C7] p-3 text-center">
+                            <div key={i} className="w-28 h-28 bg-gray-50 rounded-2xl flex flex-col items-center justify-center text-gray-500 border border-gray-200 p-3 text-center">
                               <FileText size={18}/>
                               <span className="text-[9px] mt-2 line-clamp-2">{at.name}</span>
                             </div>

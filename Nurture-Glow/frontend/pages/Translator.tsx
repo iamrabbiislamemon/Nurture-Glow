@@ -85,7 +85,7 @@ const Translator: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-12 animate-in fade-in duration-500 pb-20">
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8 animate-in fade-in duration-500 pb-20 relative">
       {/* Speaker Logic Toast */}
       {ttsToast && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 rounded-full bg-[#E6C77A] text-teal-900 shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4">
@@ -118,13 +118,13 @@ const Translator: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div className="space-y-8">
-          <div className="bg-white p-10 rounded-[48px] shadow-sm border border-gray-100 space-y-6">
+          <div className="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="relative">
               <textarea 
                 value={text}
                 onChange={e => setText(e.target.value)}
                 placeholder={direction === 'en-bn' ? "Type a symptom or common medical phrase..." : "আপনার শারীরিক সমস্যার কথা বাংলায় লিখুন..."}
-                className="w-full h-64 p-8 bg-[#F7F5EF] rounded-[40px] outline-none border-2 border-transparent focus:bg-white focus:border-[#BFE6DA] focus:ring-4 focus:ring-[#BFE6DA]/10 transition-all text-lg font-medium resize-none shadow-inner"
+                className="w-full h-64 p-8 bg-[#F7F5EF] rounded-3xl outline-none border-2 border-transparent focus:bg-white focus:border-[#BFE6DA] focus:ring-4 focus:ring-[#BFE6DA]/10 transition-all text-lg font-medium resize-none shadow-inner"
               />
               {text && (
                 <button 
@@ -140,7 +140,7 @@ const Translator: React.FC = () => {
               <button 
                 onClick={() => handleTranslate()}
                 disabled={loading || !text.trim()}
-                className="w-full py-5 bg-teal-600 text-white rounded-[32px] font-bold shadow-xl shadow-teal-600/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full py-5 bg-teal-600 text-white rounded-xl font-bold shadow-xl shadow-teal-600/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {loading ? <RefreshCw className="animate-spin" size={24}/> : <><Send size={20}/> Translate</>}
               </button>
@@ -176,10 +176,10 @@ const Translator: React.FC = () => {
           </div>
         </div>
 
-        <div className={`bg-white p-10 rounded-[48px] shadow-sm border border-gray-100 flex flex-col ${!translated && !error && 'justify-center items-center opacity-30'}`}>
+        <div className={`bg-white p-10 rounded-3xl shadow-sm border border-gray-100 flex flex-col ${!translated && !error && 'justify-center items-center opacity-30'}`}>
           {translated ? (
             <div className="h-full flex flex-col animate-in fade-in duration-700">
-               <div className="flex-1 p-8 bg-[#F7F5EF] rounded-[40px] mb-6 shadow-inner border-2 border-transparent hover:border-[#BFE6DA]/20 transition-all">
+               <div className="flex-1 p-8 bg-[#F7F5EF] rounded-3xl mb-6 shadow-inner border-2 border-transparent hover:border-[#BFE6DA]/20 transition-all">
                   <div className="flex justify-between items-start mb-4">
                     <span className="text-[10px] font-bold text-teal-600 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full">Output Result</span>
                   </div>
@@ -213,7 +213,7 @@ const Translator: React.FC = () => {
             </div>
           ) : (
             <div className="text-center space-y-4">
-               <div className="w-20 h-20 bg-[#F7F5EF] rounded-[32px] flex items-center justify-center mx-auto text-gray-300">
+               <div className="w-20 h-20 bg-[#F7F5EF] rounded-3xl flex items-center justify-center mx-auto text-gray-300">
                   <Languages size={40}/>
                </div>
                <p className="text-lg font-bold text-gray-300">Translation will appear here.</p>
