@@ -40,6 +40,33 @@ export function createAiRouter({ requireAuth }) {
     }
   });
 
+  router.get('/ai/history', requireAuth, async (req, res, next) => {
+    try {
+      const rows = await query(
+        `SELECT message, response, model_used, intent, locale, risk_level, created_at
+         FROM chat_history
+         WHERE user_id = ?
+         ORDER BY created_at ASC`,
+        [req.user.sub]
+      );
+      res.json(rows);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.delete('/ai/history', requireAuth, async (req, res, next) => {
+    try {
+      await query(
+        'DELETE FROM chat_history WHERE user_id = ?',
+        [req.user.sub]
+      );
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // Voice Transcription Endpoint - OpenAI Whisper
   router.post('/ai/transcribe', requireAuth, async (req, res, next) => {
     try {

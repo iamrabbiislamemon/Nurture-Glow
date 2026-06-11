@@ -177,7 +177,8 @@ export async function handleAiChat({
     response: finalText,
     modelUsed: result.modelUsed || 'fallback',
     intent,
-    locale: normalizedLocale
+    locale: normalizedLocale,
+    riskLevel: result.riskLevel || null
   });
 
   return {

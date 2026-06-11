@@ -204,12 +204,24 @@ export async function ensureChatHistoryTable() {
       model_used VARCHAR(50) NOT NULL,
       intent VARCHAR(50) NULL,
       locale VARCHAR(10) DEFAULT 'en',
+      risk_level VARCHAR(20) NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       INDEX idx_chat_user_date (user_id, created_at),
       INDEX idx_chat_model (model_used),
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`
   );
+
+  // Dynamically add risk_level column if it doesn't exist yet in the database
+  try {
+    const columns = await query("SHOW COLUMNS FROM chat_history LIKE 'risk_level'");
+    if (columns.length === 0) {
+      await query("ALTER TABLE chat_history ADD COLUMN risk_level VARCHAR(20) NULL");
+      console.log("[DB] Added risk_level column to chat_history table.");
+    }
+  } catch (err) {
+    console.error("[DB] Failed to alter chat_history table:", err.message);
+  }
 }
 
 export async function logChatHistory({
@@ -219,12 +231,13 @@ export async function logChatHistory({
   response,
   modelUsed,
   intent,
-  locale
+  locale,
+  riskLevel
 }) {
   if (!userId || !message || !response || !modelUsed) return;
   await query(
-    `INSERT INTO chat_history (id, user_id, message, response, model_used, intent, locale)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [id, userId, message, response, modelUsed, intent || null, locale || 'en']
+    `INSERT INTO chat_history (id, user_id, message, response, model_used, intent, locale, risk_level)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, userId, message, response, modelUsed, intent || null, locale || 'en', riskLevel || null]
   );
 }

@@ -38,6 +38,46 @@ export const Assistant: React.FC = () => {
     scrollToBottom();
   }, [chat, loading]);
 
+  // Load chat history on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const history = await AIService.getChatHistory();
+        const entries: ChatEntry[] = [];
+        history.forEach((h: any) => {
+          entries.push({ role: 'user', text: h.message });
+          entries.push({
+            role: 'bot',
+            text: h.response,
+            modelUsed: h.model_used,
+            intent: h.intent,
+            riskLevel: h.risk_level
+          });
+        });
+        setChat(entries);
+      } catch (error) {
+        console.error('Error loading chat history:', error);
+      }
+    };
+    loadHistory();
+  }, []);
+
+  const handleClearHistory = async () => {
+    const confirmClear = window.confirm(
+      locale === 'bn' 
+        ? 'আপনি কি নিশ্চিত যে আপনি আপনার সমস্ত চ্যাট ইতিহাস মুছে ফেলতে চান?' 
+        : 'Are you sure you want to clear your entire chat history?'
+    );
+    if (!confirmClear) return;
+
+    try {
+      await AIService.clearChatHistory();
+      setChat([]);
+    } catch (error) {
+      console.error('Failed to clear chat history:', error);
+    }
+  };
+
   const handleSend = async () => {
     if(!msg.trim()) return;
     const userMsg = msg;
@@ -140,6 +180,12 @@ export const Assistant: React.FC = () => {
             className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-rose-500 text-white shadow-md hover:bg-rose-600 active:scale-95 transition-all"
           >
             <Mic size={14}/> {locale === 'bn' ? 'ভয়েস সহকারী' : 'Voice Assistant'}
+          </button>
+          <button
+            onClick={handleClearHistory}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-gray-500 text-white shadow-md hover:bg-gray-600 active:scale-95 transition-all cursor-pointer"
+          >
+            <History size={14}/> {locale === 'bn' ? 'ইতিহাস মুছুন' : 'Clear Chat'}
           </button>
           <div className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-teal-600 text-white shadow-md">
             <MessageSquare size={14}/> {t('ai.contextAware')}
