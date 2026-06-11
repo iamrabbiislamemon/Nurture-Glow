@@ -667,3 +667,119 @@ html.dark,
 .dark .hover\:bg-purple-50\/50:hover {
   background-color: rgba(139, 92, 246, 0.12) !important;
 }
+
+/* ============================================================
+   PREMIUM CARD INTERACTIVE EFFECTS & TEXT RECOVERIES
+   ============================================================ */
+.dark .bg-white,
+.dark .bg-surface,
+.dark [class*="rounded-"].bg-white {
+  background-color: #121826 !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dark .bg-white:hover,
+.dark .bg-surface:hover,
+.dark [class*="rounded-"].bg-white:hover {
+  border-color: rgba(201, 169, 97, 0.35) !important;
+  box-shadow: 0 16px 40px rgba(201, 169, 97, 0.06), 0 0 0 1px rgba(201, 169, 97, 0.15) !important;
+}
+
+/* Restore crisp white text to elements that explicitly require it in dark mode */
+.dark .text-white,
+.dark .dark\:text-white,
+.dark .text-\[\#FFFFFF\],
+.dark .text-\[\#ffffff\] {
+  color: #FFFFFF !important;
+}
+.dark .text-white\/95 { color: rgba(255, 255, 255, 0.95) !important; }
+.dark .text-white\/90 { color: rgba(255, 255, 255, 0.90) !important; }
+.dark .text-white\/80 { color: rgba(255, 255, 255, 0.80) !important; }
+.dark .text-white\/70 { color: rgba(255, 255, 255, 0.70) !important; }
+.dark .text-white\/60 { color: rgba(255, 255, 255, 0.60) !important; }
+.dark .text-white\/50 { color: rgba(255, 255, 255, 0.50) !important; }
+.dark .text-white\/45 { color: rgba(255, 255, 255, 0.45) !important; }
+.dark .text-white\/40 { color: rgba(255, 255, 255, 0.40) !important; }
+.dark .text-white/30 { color: rgba(255, 255, 255, 0.30) !important; }
+
+/* ============================================================
+   INTERACTIVE DELIGHT & ATTENTION-SEEKING LIVE ANIMATIONS
+   ============================================================ */
+
+/* 1. Shimmer sweep reflection on hover */
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.shimmer-hover:hover::after {
+  animation: hoverShimmerSweep 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes hoverShimmerSweep {
+  0% { left: -150%; }
+  100% { left: 150%; }
+}
+
+/* 2. Premium double-beat pulse on hover for vital metrics icons */
+.beat-on-hover:hover svg,
+.group:hover .beat-on-hover svg,
+button:hover .beat-on-hover svg {
+  animation: premiumHeartBeat 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+@keyframes premiumHeartBeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.2) rotate(-3deg); }
+  50% { transform: scale(1.1) rotate(3deg); }
+  75% { transform: scale(1.18) rotate(0deg); }
+}
+
+/* 3. Subtle shake warning for emergency alerts */
+.shake-on-hover:hover {
+  animation: dynamicShake 0.4s ease-in-out;
+}
+
+@keyframes dynamicShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* 4. Floating animation for decorative bubbles */
+.animate-float {
+  animation: dynamicFloat 6s ease-in-out infinite;
+}
+
+@keyframes dynamicFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* 5. Gentle pulse animation for floating vitals */
+.animate-pulse-slow {
+  animation: pulseSlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseSlow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}

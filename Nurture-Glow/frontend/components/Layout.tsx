@@ -20,6 +20,8 @@ import {
   buildQuickAccessItems,
 } from './navigation';
 
+import { Reveal } from './landing/motion/Reveal';
+
 // ─── Lazy-loaded pages (code splitting) ─────────────────────────────
 // Each page is loaded on demand, significantly reducing the initial bundle size.
 const Landing = React.lazy(() => import('../pages/Landing'));
@@ -359,19 +361,23 @@ const Layout: React.FC = () => {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  {user?.role === 'doctor' ? (
-                    <DoctorDashboard />
-                  ) : user?.role === 'pharmacist' ? (
-                    <PharmacistDashboard />
-                  ) : user?.role === 'merchandiser' ? (
-                    <MerchandiserDashboard />
-                  ) : user?.role === 'nutritionist' ? (
-                    <NutritionistDashboard />
-                  ) : user?.role === 'driver' ? (
-                    <DriverDashboard />
-                  ) : (
-                    <Dashboard />
-                  )}
+                  <Reveal y={24} duration={0.8}>
+                    <>
+                      {user?.role === 'doctor' ? (
+                        <DoctorDashboard />
+                      ) : user?.role === 'pharmacist' ? (
+                        <PharmacistDashboard />
+                      ) : user?.role === 'merchandiser' ? (
+                        <MerchandiserDashboard />
+                      ) : user?.role === 'nutritionist' ? (
+                        <NutritionistDashboard />
+                      ) : user?.role === 'driver' ? (
+                        <DriverDashboard />
+                      ) : (
+                        <Dashboard />
+                      )}
+                    </>
+                  </Reveal>
                 </ProtectedRoute>
               }
             />

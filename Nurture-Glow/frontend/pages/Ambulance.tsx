@@ -7,6 +7,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useTranslations } from '../i18n/I18nContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { db } from '../services/db';
 import { apiFetch } from '../services/api';
 
@@ -26,6 +27,7 @@ const Ambulance: React.FC = () => {
   const { user } = useAuth();
   const { t, locale } = useTranslations();
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const [activeTrip, setActiveTrip] = useState<any>(null);
   const [driverDetails, setDriverDetails] = useState<any>(null);
@@ -129,6 +131,15 @@ const Ambulance: React.FC = () => {
     };
   }, [user, activeTrip]);
 
+  const lastThemeRef = useRef(theme);
+  if (lastThemeRef.current !== theme) {
+    if (leafletMapRef.current) {
+      leafletMapRef.current.remove();
+      leafletMapRef.current = null;
+    }
+    lastThemeRef.current = theme;
+  }
+
   // Leaflet Map tracker for Patient
   useEffect(() => {
     if (!activeTrip || !mapRef.current) {
@@ -151,9 +162,14 @@ const Ambulance: React.FC = () => {
         zoomControl: true
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(leafletMapRef.current);
+      const tileUrl = theme === 'dark' 
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' 
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      const attribution = theme === 'dark'
+        ? '&copy; OpenStreetMap contributors &copy; CARTO'
+        : '&copy; OpenStreetMap contributors';
+
+      L.tileLayer(tileUrl, { attribution }).addTo(leafletMapRef.current);
 
       mapLayersGroupRef.current = L.layerGroup().addTo(leafletMapRef.current);
     }
@@ -204,7 +220,7 @@ const Ambulance: React.FC = () => {
     setTimeout(() => {
       map.invalidateSize();
     }, 200);
-  }, [activeTrip, driverLocation, patientLocation]);
+  }, [activeTrip, driverLocation, patientLocation, theme]);
 
   const handleHospitalChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -312,26 +328,26 @@ const Ambulance: React.FC = () => {
     vehicleNumber: driverDetails.vehicleNumber || driverDetails.vehicle_number || 'NG-AMB-9999',
     vehicleType: driverDetails.vehicleType || driverDetails.vehicle_type || (locale === 'bn' ? 'প্রিমিয়াম আইসিইউ অ্যাম্বুলেন্স' : 'Premium ICU Ambulance'),
     rating: parseFloat(driverDetails.rating) || 4.95,
-    avatar: driverDetails.avatar || `https://picsum.photos/seed/${driverDetails.id || 'driver'}/100/100`
+    avatar: driverDetails.avatar || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiNFMkU4RjAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjkuNSIgcj0iMy41IiBmaWxsPSIjOTRBM0I4Ii8+PHBhdGggZD0iTTEyIDE0LjVjLTQgMC03LjUgMi03LjUgNXYxLjVoMTV2LTEuNWMwLTMtMy41LTUtNy41LTV6IiBmaWxsPSIjOTRBM0I4Ii8+PC9zdmc+'
   } : null;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#F7F5EF]">
+      <div className="flex items-center justify-center h-screen bg-[#F7F5EF] dark:bg-[#050505]">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="h-[calc(100vh-5.2rem)] bg-[#F7F5EF] p-4 md:p-5 flex flex-col overflow-hidden max-w-full">
+    <div className="h-[calc(100vh-5.2rem)] bg-[#F7F5EF] dark:bg-[#050505] p-4 md:p-5 flex flex-col overflow-hidden max-w-full">
       <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col gap-3 min-h-0 overflow-hidden">
         
         {/* Navigation & Header */}
         <div className="flex items-center gap-3 shrink-0">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="p-2 rounded-full bg-white hover:bg-gray-100 text-gray-700 shadow-sm border border-gray-150 transition-all cursor-pointer"
+            className="p-2 rounded-full bg-white dark:bg-[#0A0A0A] hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-200 shadow-sm border border-gray-200 dark:border-[#1C1C1E] transition-all cursor-pointer"
           >
             <ArrowLeft size={16} />
           </button>
@@ -339,22 +355,22 @@ const Ambulance: React.FC = () => {
             <span className="text-[9px] font-extrabold text-red-500 uppercase tracking-widest block leading-none">
               {locale === 'bn' ? 'জরুরি সেবা' : 'Emergency Services'}
             </span>
-            <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight mt-0.5 leading-none">
+            <h1 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white tracking-tight mt-0.5 leading-none">
               {locale === 'bn' ? 'মাতৃত্বকালীন অ্যাম্বুলেন্স ডিসপ্যাচ' : 'Maternal Ambulance Dispatch'}
             </h1>
           </div>
         </div>
 
         {/* Informative Disclaimer */}
-        <div className="bg-amber-50/70 border border-amber-200/50 rounded-2xl p-3 flex items-start gap-3 shadow-sm backdrop-blur-sm shrink-0">
-          <div className="p-2 bg-amber-100/80 text-amber-700 rounded-xl">
+        <div className="bg-amber-50/70 dark:bg-amber-950/15 border border-amber-200/50 dark:border-amber-900/30 rounded-2xl p-3 flex items-start gap-3 shadow-sm backdrop-blur-sm shrink-0">
+          <div className="p-2 bg-amber-100/80 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 rounded-xl">
             <Shield size={16} />
           </div>
           <div className="space-y-0.5">
-            <h3 className="font-bold text-amber-800 text-xs">
+            <h3 className="font-bold text-amber-800 dark:text-amber-300 text-xs">
               {locale === 'bn' ? 'নিরাপত্তা ও গোপনীয়তা গ্যারান্টি' : 'Privacy & Security Guarantee'}
             </h3>
-            <p className="text-[10px] text-amber-700/90 leading-relaxed">
+            <p className="text-[10px] text-amber-700/90 dark:text-amber-400/90 leading-relaxed">
               {locale === 'bn' 
                 ? 'আপনার চিকিৎসা বিবরণ (সপ্তাহের সংখ্যা, জটিলতা, ইত্যাদি) গোপন রাখা হয়েছে। চালক শুধুমাত্র আপনার যোগাযোগের ফোন নম্বর এবং পিকআপ জিপিএস অবস্থান দেখতে পাবেন।'
                 : 'Your medical details (complications, weeks of pregnancy, heart rate) are completely hidden. The driver only receives your name, phone number, and GPS coordinates for routing.'}
@@ -369,11 +385,11 @@ const Ambulance: React.FC = () => {
           <div className="lg:col-span-5 flex flex-col gap-4 min-h-0 overflow-y-auto custom-scrollbar pr-1">
             
             {/* Booking Card */}
-            <div className="bg-white rounded-[24px] p-5 shadow-sm border border-gray-150 relative overflow-hidden shrink-0">
+            <div className="bg-white dark:bg-[#0A0A0A] rounded-[24px] p-5 shadow-sm border border-gray-200 dark:border-[#1C1C1E] relative overflow-hidden shrink-0">
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">
+                  <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                     {locale === 'bn' ? 'জরুরি ডিসপ্যাচ নিয়ন্ত্রণ' : 'Emergency Dispatch Hub'}
                   </span>
                 </div>
@@ -381,13 +397,13 @@ const Ambulance: React.FC = () => {
                 {!activeTrip ? (
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest block">
+                      <label className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest block">
                         {locale === 'bn' ? 'পছন্দের গন্তব্য হাসপাতাল' : 'Preferred Destination Hospital'}
                       </label>
                       <select
                         value={selectedHospital}
                         onChange={handleHospitalChange}
-                        className="w-full bg-gray-50/80 border border-gray-200 rounded-xl p-3 text-xs font-semibold text-gray-700 focus:outline-none focus:border-red-400 focus:bg-white transition-all cursor-pointer"
+                        className="w-full bg-gray-50/80 dark:bg-[#1C1C21]/80 border border-gray-200 dark:border-[#2E3036] rounded-xl p-3 text-xs font-semibold text-gray-700 dark:text-gray-200 focus:outline-none focus:border-red-400 dark:focus:border-red-500 focus:bg-white dark:focus:bg-[#121318] transition-all cursor-pointer"
                       >
                         <option value="">{locale === 'bn' ? '-- গন্তব্য হাসপাতাল নির্বাচন করুন --' : '-- Select Destination Hospital --'}</option>
                         {hospitals.map((hosp) => (
@@ -402,7 +418,7 @@ const Ambulance: React.FC = () => {
                       <button
                         onClick={handleTriggerEmergency}
                         disabled={requesting}
-                        className="w-32 h-32 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-rose-600 hover:from-red-600 hover:to-rose-700 disabled:from-red-300 disabled:to-red-400 text-white font-extrabold text-center flex flex-col items-center justify-center shadow-lg shadow-red-150 hover:shadow-xl hover:scale-105 transition-all relative overflow-hidden group cursor-pointer"
+                        className="w-32 h-32 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-rose-600 hover:from-red-600 hover:to-rose-700 disabled:from-red-300 disabled:to-red-400 text-white font-extrabold text-center flex flex-col items-center justify-center shadow-lg shadow-red-150 dark:shadow-red-950/50 hover:shadow-xl hover:scale-105 transition-all relative overflow-hidden group cursor-pointer"
                       >
                         <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-25 animate-ping" />
                         <AlertCircle size={28} className="mb-1 text-white animate-bounce" />
@@ -418,21 +434,21 @@ const Ambulance: React.FC = () => {
                 ) : (
                   // Active trip container
                   <div className="space-y-4">
-                    <div className="bg-red-50/50 rounded-xl p-3 border border-red-100 flex items-center justify-between">
+                    <div className="bg-red-50/50 dark:bg-red-950/20 rounded-xl p-3 border border-red-100 dark:border-red-900/30 flex items-center justify-between">
                       <div>
-                        <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">
+                        <p className="text-[9px] font-black text-red-500 dark:text-red-400 uppercase tracking-widest">
                           {locale === 'bn' ? 'অনুরোধের অবস্থা' : 'Booking Status'}
                         </p>
-                        <h4 className="text-sm font-black text-red-700 uppercase mt-0.5">
+                        <h4 className="text-sm font-black text-red-700 dark:text-red-400 uppercase mt-0.5">
                           {activeTrip.status}
                         </h4>
                       </div>
                       {eta !== null && (
                         <div className="text-right">
-                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                          <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                             {locale === 'bn' ? 'আনুমানিক সময়' : 'Estimated ETA'}
                           </p>
-                          <h4 className="text-sm font-black text-gray-800 mt-0.5">
+                          <h4 className="text-sm font-black text-gray-800 dark:text-gray-250 mt-0.5">
                             {eta} {locale === 'bn' ? 'মিনিট' : 'Mins'}
                           </h4>
                         </div>
@@ -441,24 +457,24 @@ const Ambulance: React.FC = () => {
 
                     {normalizedDriver ? (
                       <div className="space-y-3">
-                        <div className="flex items-center gap-3 bg-gray-50/60 p-3 rounded-xl border border-gray-100">
+                        <div className="flex items-center gap-3 bg-gray-50/60 dark:bg-[#1C1C21]/60 p-3 rounded-xl border border-gray-100 dark:border-[#2C2C35]">
                           <img 
                             src={normalizedDriver.avatar} 
                             alt={normalizedDriver.name} 
-                            className="w-12 h-12 rounded-xl object-cover ring-2 ring-white shadow-sm"
+                            className="w-12 h-12 rounded-xl object-cover ring-2 ring-white dark:ring-zinc-800 shadow-sm"
                           />
                           <div className="flex-1 min-w-0">
-                            <span className="text-[9px] font-extrabold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded-full border border-teal-100 inline-block mb-0.5">
+                            <span className="text-[9px] font-extrabold text-teal-600 dark:text-teal-450 bg-teal-50 dark:bg-teal-950/20 px-1.5 py-0.5 rounded-full border border-teal-100 dark:border-teal-900/30 inline-block mb-0.5">
                               {normalizedDriver.vehicleType}
                             </span>
-                            <h4 className="font-extrabold text-gray-850 text-xs truncate leading-none">
+                            <h4 className="font-extrabold text-gray-900 dark:text-white text-xs truncate leading-none">
                               {normalizedDriver.name}
                             </h4>
                             <div className="flex items-center gap-1 mt-0.5">
                               <span className="flex items-center">
                                 {renderStars(normalizedDriver.rating)}
                               </span>
-                              <span className="text-[10px] font-black text-amber-600">
+                              <span className="text-[10px] font-black text-amber-600 dark:text-amber-400">
                                 {normalizedDriver.rating.toFixed(2)}
                               </span>
                             </div>
@@ -466,26 +482,26 @@ const Ambulance: React.FC = () => {
                         </div>
 
                         <div className="space-y-1 text-[11px]">
-                          <div className="flex justify-between py-1 border-b border-gray-100">
-                            <span className="text-gray-400 font-bold">{locale === 'bn' ? 'অ্যাম্বুলেন্স প্লেট নম্বর' : 'Vehicle Plate'}</span>
-                            <span className="font-black text-gray-800 bg-gray-100 px-1.5 py-0.5 rounded text-right">{normalizedDriver.vehicleNumber}</span>
+                          <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#1C1C1E]">
+                            <span className="text-gray-400 dark:text-gray-500 font-bold">{locale === 'bn' ? 'অ্যাম্বুলেন্স প্লেট নম্বর' : 'Vehicle Plate'}</span>
+                            <span className="font-black text-gray-800 dark:text-gray-205 bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-right">{normalizedDriver.vehicleNumber}</span>
                           </div>
                           <div className="flex justify-between py-1">
-                            <span className="text-gray-400 font-bold">{locale === 'bn' ? 'চালকের সাথে যোগাযোগ' : 'Driver Phone'}</span>
-                            <span className="font-extrabold text-teal-600 text-right">{normalizedDriver.phone}</span>
+                            <span className="text-gray-400 dark:text-gray-500 font-bold">{locale === 'bn' ? 'চালকের সাথে যোগাযোগ' : 'Driver Phone'}</span>
+                            <span className="font-extrabold text-teal-600 dark:text-teal-400 text-right">{normalizedDriver.phone}</span>
                           </div>
                         </div>
 
                         <div className="flex gap-2 pt-1">
                           <a
                             href={`tel:${normalizedDriver.phone}`}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-red-100 hover:bg-red-200 text-red-750 rounded-xl text-xs font-black transition-all border border-red-200"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-red-100 hover:bg-red-200 dark:bg-red-950/40 dark:hover:bg-red-900/40 text-red-800 dark:text-red-400 rounded-xl text-xs font-black transition-all border border-red-200 dark:border-red-900/30"
                           >
                             <Phone size={12} /> {locale === 'bn' ? 'কল করুন' : 'Call Driver'}
                           </a>
                           <button
                             onClick={handleCancelEmergency}
-                            className="px-3 py-2.5 bg-white hover:bg-red-50 text-red-500 rounded-xl text-xs font-black transition-all border border-gray-250 hover:border-red-200 cursor-pointer"
+                            className="px-3 py-2.5 bg-white dark:bg-[#1C1C21] hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 dark:text-red-400 rounded-xl text-xs font-black transition-all border border-gray-250 dark:border-[#2C2C35] hover:border-red-200 dark:hover:border-red-900/30 cursor-pointer"
                           >
                             {locale === 'bn' ? 'বাতিল' : 'Cancel'}
                           </button>
@@ -493,14 +509,14 @@ const Ambulance: React.FC = () => {
                       </div>
                     ) : (
                       <div className="space-y-3 py-2 text-center">
-                        <div className="inline-flex p-2.5 rounded-full bg-red-50 text-red-500 animate-pulse">
+                        <div className="inline-flex p-2.5 rounded-full bg-red-50 dark:bg-red-950/35 text-red-500 dark:text-red-400 animate-pulse">
                           <Navigation size={20} className="animate-spin" />
                         </div>
                         <div className="space-y-0.5">
-                          <p className="font-extrabold text-gray-700 text-xs">
+                          <p className="font-extrabold text-gray-700 dark:text-gray-200 text-xs">
                             {locale === 'bn' ? 'চালকের জন্য খোঁজ করা হচ্ছে...' : 'Searching for operational drivers...'}
                           </p>
-                          <p className="text-[9px] text-gray-450 leading-none">
+                          <p className="text-[9px] text-gray-500 dark:text-gray-405 leading-none">
                             {locale === 'bn' 
                               ? 'নিকটবর্তী চালকদের সিস্টেমে পাঠানো হয়েছে।'
                               : 'Request pushed to active units.'}
@@ -508,7 +524,7 @@ const Ambulance: React.FC = () => {
                         </div>
                         <button
                           onClick={handleCancelEmergency}
-                          className="w-full py-2.5 bg-white hover:bg-red-50 text-red-500 rounded-xl text-xs font-black transition-all border border-gray-200 hover:border-red-200 cursor-pointer"
+                          className="w-full py-2.5 bg-white dark:bg-[#1C1C21] hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 dark:text-red-400 rounded-xl text-xs font-black transition-all border border-gray-200 dark:border-[#2C2C35] hover:border-red-200 dark:hover:border-red-900/30 cursor-pointer"
                         >
                           {locale === 'bn' ? 'অনুরোধ বাতিল করুন' : 'Cancel Request'}
                         </button>
@@ -520,7 +536,7 @@ const Ambulance: React.FC = () => {
             </div>
 
             {/* Quick Hospital Directory Link */}
-            <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-[24px] p-5 text-white shadow-sm border border-teal-500/20 shrink-0">
+            <div className="bg-gradient-to-br from-teal-500 to-emerald-600 dark:from-teal-600 dark:to-emerald-750 rounded-[24px] p-5 text-white shadow-sm border border-teal-500/20 dark:border-teal-900/30 shrink-0">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-white/10 rounded-xl">
                   <MapPin size={16} />
@@ -536,7 +552,7 @@ const Ambulance: React.FC = () => {
                   </p>
                   <button 
                     onClick={() => navigate('/hospitals')}
-                    className="text-[10px] font-black text-[#E6C77A] hover:underline flex items-center gap-1 pt-0.5 cursor-pointer bg-transparent border-none p-0 align-baseline"
+                    className="text-[10px] font-black text-[#E6C77A] dark:text-[#F3D692] hover:underline flex items-center gap-1 pt-0.5 cursor-pointer bg-transparent border-none p-0 align-baseline"
                   >
                     {locale === 'bn' ? 'হাসপাতালের তালিকা দেখুন' : 'Browse Partner Hospitals'} &rarr;
                   </button>
@@ -547,16 +563,16 @@ const Ambulance: React.FC = () => {
           </div>
 
           {/* Right Panel: Interactive Leaflet Map tracking */}
-          <div className="lg:col-span-7 bg-white rounded-[24px] p-5 shadow-sm border border-gray-150 flex flex-col min-h-0">
+          <div className="lg:col-span-7 bg-white dark:bg-[#0A0A0A] rounded-[24px] p-5 shadow-sm border border-gray-200 dark:border-[#1C1C1E] flex flex-col min-h-0">
             <div className="flex items-center justify-between shrink-0 mb-3">
               <div className="flex items-center gap-2">
                 <Navigation size={14} className="text-teal-600" />
-                <h3 className="font-black text-gray-800 text-xs">
+                <h3 className="font-black text-gray-800 dark:text-white text-xs">
                   {locale === 'bn' ? 'লাইভ ট্র্যাকিং ম্যাপ' : 'Live Incident Tracking Map'}
                 </h3>
               </div>
               {activeTrip && (
-                <span className="text-[9px] font-black text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100 uppercase tracking-widest">
+                <span className="text-[9px] font-black text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/20 px-2 py-0.5 rounded border border-teal-100 dark:border-teal-900/30 uppercase tracking-widest">
                   {locale === 'bn' ? 'সক্রিয় সংযোগ' : 'Active Connection'}
                 </span>
               )}
@@ -566,19 +582,19 @@ const Ambulance: React.FC = () => {
               {activeTrip ? (
                 <div 
                   ref={mapRef} 
-                  className="absolute inset-0 w-full h-full rounded-xl border border-gray-100 shadow-inner" 
+                  className="absolute inset-0 w-full h-full rounded-xl border border-gray-100 dark:border-[#1C1C1E] shadow-inner" 
                   style={{ zIndex: 1 }} 
                 />
               ) : (
-                <div className="absolute inset-0 w-full h-full rounded-xl bg-gray-50/50 flex flex-col items-center justify-center border border-dashed border-gray-200 p-6 text-center space-y-2">
-                  <div className="p-3 rounded-full bg-gray-100 text-gray-400">
+                <div className="absolute inset-0 w-full h-full rounded-xl bg-gray-50/50 dark:bg-[#121318]/50 flex flex-col items-center justify-center border border-dashed border-gray-200 dark:border-[#2E3036] p-6 text-center space-y-2">
+                  <div className="p-3 rounded-full bg-gray-100 dark:bg-[#1C1C21] text-gray-400 dark:text-gray-500">
                     <MapPin size={24} />
                   </div>
                   <div className="space-y-0.5 max-w-[240px]">
-                    <p className="font-extrabold text-gray-700 text-xs">
+                    <p className="font-extrabold text-gray-700 dark:text-gray-200 text-xs">
                       {locale === 'bn' ? 'ম্যাপ নিষ্ক্রিয়' : 'Map Currently Idle'}
                     </p>
-                    <p className="text-[10px] text-gray-400 leading-relaxed">
+                    <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-relaxed">
                       {locale === 'bn' 
                         ? 'অ্যাম্বুলেন্স অনুরোধ করার পর এখানে লাইভ ট্র্যাকিং চালু হবে।'
                         : 'Once you trigger an emergency dispatch request, the interactive routing map will load here.'}
@@ -588,8 +604,8 @@ const Ambulance: React.FC = () => {
               )}
             </div>
             
-            <div className="flex items-center gap-2 bg-gray-50/80 border border-gray-100 rounded-xl p-2.5 text-[9px] text-gray-500 shrink-0 mt-3">
-              <Info size={10} className="text-teal-600 shrink-0" />
+            <div className="flex items-center gap-2 bg-gray-50/80 dark:bg-[#1C1C21]/80 border border-gray-100 dark:border-[#2C2C35] rounded-xl p-2.5 text-[9px] text-gray-500 dark:text-gray-400 shrink-0 mt-3">
+              <Info size={10} className="text-teal-600 dark:text-teal-400 shrink-0" />
               <p>
                 {locale === 'bn'
                   ? 'উত্তম ফলাফলের জন্য ব্রাউজারের জিপিএস চালু রাখুন।'

@@ -8,6 +8,7 @@ import { ShareHealthIdModal } from '../../components/ShareHealthIdModal';
 import ProfileHero from './components/ProfileHero';
 import ProfileTabs from './components/ProfileTabs';
 import Toast from './components/Toast';
+import { Reveal } from '../../components/landing/motion/Reveal';
 import LogVisitModal from './modals/LogVisitModal';
 import VerificationRequestModal from './modals/VerificationRequestModal';
 import RejectReasonModal from './modals/RejectReasonModal';
@@ -443,7 +444,7 @@ const ProfilePage: React.FC = () => {
     let total = 7;
 
     if (user?.name) score++;
-    if (user?.avatar && user.avatar !== '') score++;
+    if (user?.avatar && user.avatar !== '' && !user.avatar.startsWith('data:image/svg+xml')) score++;
     if (medical.bloodGroup) score++;
     if (emergencyContact.name) score++;
     if (visits.length > 0 || docs.length > 0) score++;
@@ -456,7 +457,7 @@ const ProfilePage: React.FC = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-[#BFE6DA]/5 pb-20 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#F7F5EF] via-[#FAF9F5] to-[#F7F5EF] dark:from-[#0B0F19] dark:via-[#121826] dark:to-[#0B0F19] pb-20 relative overflow-x-hidden">
       <ShareHealthIdModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} user={user} />
       <Toast toast={toast} />
 
@@ -488,49 +489,51 @@ const ProfilePage: React.FC = () => {
       />
 
       {/* Tabs Section */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10">
-        <ProfileTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          user={user}
-          // Overview tab data
-          medical={medical}
-          visits={visits}
-          docs={docs}
-          emergencyContact={emergencyContact}
-          profileCompletion={profileCompletion()}
-          healthIdStatus={healthIdStatus}
-          // Medical Records tab data
-          isEditingMedical={isEditingMedical}
-          onToggleMedicalEdit={() => setIsEditingMedical(!isEditingMedical)}
-          onSaveMedical={saveMedical}
-          onMedicalChange={setMedical}
-          onDocUpload={handleDocUpload}
-          onLogVisit={() => setShowLogVisit(true)}
-          onDeleteVisit={handleDeleteVisit}
-          // Verification & Security tab data
-          canRequestVerification={canRequestVerification}
-          isHospitalAccount={isHospitalAccount}
-          verificationRequests={verificationRequests}
-          isLoadingRequests={isLoadingRequests}
-          onRequestVerification={() => setShowVerificationModal(true)}
-          onApproveRequest={(id) => handleDecision(id, 'accepted')}
-          onRejectRequest={(req) => {
-            setRejectingRequest(req);
-            setRejectReason('');
-          }}
-          // Emergency contact
-          onEditEmergencyContact={() => {
-            setEmergencyForm(emergencyContact);
-            setShowEmergencyContactModal(true);
-          }}
-          // Connections tab
-          connectedHospitals={connectedHospitals}
-          connectedDevices={connectedDevices}
-          onAddDevice={handleAddDevice}
-          onRemoveDevice={handleRemoveDevice}
-        />
-      </div>
+      <Reveal y={30} delay={0.25}>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10">
+          <ProfileTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            user={user}
+            // Overview tab data
+            medical={medical}
+            visits={visits}
+            docs={docs}
+            emergencyContact={emergencyContact}
+            profileCompletion={profileCompletion()}
+            healthIdStatus={healthIdStatus}
+            // Medical Records tab data
+            isEditingMedical={isEditingMedical}
+            onToggleMedicalEdit={() => setIsEditingMedical(!isEditingMedical)}
+            onSaveMedical={saveMedical}
+            onMedicalChange={setMedical}
+            onDocUpload={handleDocUpload}
+            onLogVisit={() => setShowLogVisit(true)}
+            onDeleteVisit={handleDeleteVisit}
+            // Verification & Security tab data
+            canRequestVerification={canRequestVerification}
+            isHospitalAccount={isHospitalAccount}
+            verificationRequests={verificationRequests}
+            isLoadingRequests={isLoadingRequests}
+            onRequestVerification={() => setShowVerificationModal(true)}
+            onApproveRequest={(id) => handleDecision(id, 'accepted')}
+            onRejectRequest={(req) => {
+              setRejectingRequest(req);
+              setRejectReason('');
+            }}
+            // Emergency contact
+            onEditEmergencyContact={() => {
+              setEmergencyForm(emergencyContact);
+              setShowEmergencyContactModal(true);
+            }}
+            // Connections tab
+            connectedHospitals={connectedHospitals}
+            connectedDevices={connectedDevices}
+            onAddDevice={handleAddDevice}
+            onRemoveDevice={handleRemoveDevice}
+          />
+        </div>
+      </Reveal>
 
       {/* Modals */}
       {showLogVisit && (

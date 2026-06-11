@@ -4,6 +4,8 @@ import { query, withTransaction } from '../db.js';
 import { getBySubtype, getUserMeta } from '../appStore.js';
 import { broadcastToUser, notifyDriversOfEmergency, notifyPatientOfAcceptance, notifyPatientOfStatusChange } from '../ambulanceSocket.js';
 
+const DEFAULT_GENDER_UNIFIED_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiNFMkU4RjAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjkuNSIgcj0iMy41IiBmaWxsPSIjOTRBM0I4Ii8+PHBhdGggZD0iTTEyIDE0LjVjLTQgMC03LjUgMi03LjUgNXYxLjVoMTV2LTEuNWMwLTMtMy41LTUtNy41LTV6IiBmaWxsPSIjOTRBM0I4Ii8+PC9zdmc+';
+
 export function createAmbulanceRouter(deps = {}) {
   const requireAuth = deps.requireAuth || ((req, res, next) => next());
   const router = express.Router();
@@ -26,7 +28,7 @@ export function createAmbulanceRouter(deps = {}) {
       vehicle_number: profileRows[0].vehicle_number,
       rating: parseFloat(profileRows[0].rating) || 5.00,
       vehicle_type: profileRows[0].vehicle_type || 'Standard ICU',
-      avatar: meta.avatar || `https://picsum.photos/seed/${driverUserId}/100/100`
+      avatar: meta.avatar || DEFAULT_GENDER_UNIFIED_AVATAR
     };
   };
 
