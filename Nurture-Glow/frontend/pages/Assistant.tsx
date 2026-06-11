@@ -11,22 +11,13 @@ import { AIService, RiskLevel } from '../services/aiService';
 import { LiveAssistant } from '../components/ai/LiveAssistant';
 import { speakTextNative, playPcmAudio } from '../services/ttsService';
 
-type ChatEntry = {
-  role: 'user' | 'bot';
-  text: string;
-  sources?: any[];
-  modelUsed?: string;
-  intent?: string;
-  riskLevel?: RiskLevel;
-};
+import { useAI, ChatEntry } from '../contexts/AIContext';
 
 export const Assistant: React.FC = () => {
   const { t, locale } = useTranslations();
+  const { chat, loading, sendMessage, clearHistory } = useAI();
   const [msg, setMsg] = useState('');
-  const [chat, setChat] = useState<ChatEntry[]>([]);
-  const [loading, setLoading] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
-  const [includeContext] = useState(true);
   const [showLive, setShowLive] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -38,31 +29,21 @@ export const Assistant: React.FC = () => {
     scrollToBottom();
   }, [chat, loading]);
 
+  const handleClearHistory = async () => {
+    const confirmClear = window.confirm(
+      locale === 'bn' 
+        ? 'আপনি কি নিশ্চিত যে আপনি আপনার সমস্ত চ্যাট ইতিহাস মুছে ফেলতে চান?' 
+        : 'Are you sure you want to clear your entire chat history?'
+    );
+    if (!confirmClear) return;
+    await clearHistory();
+  };
+
   const handleSend = async () => {
-    if(!msg.trim()) return;
+    if (!msg.trim()) return;
     const userMsg = msg;
     setMsg('');
-    setChat(prev => [...prev, { role: 'user', text: userMsg }]);
-    setLoading(true);
-
-    try {
-      const response = await AIService.chatAssistant(userMsg, locale, includeContext);
-      setChat(prev => [
-        ...prev,
-        {
-          role: 'bot',
-          text: response.text,
-          sources: response.sources,
-          modelUsed: response.model_used,
-          intent: response.intent,
-          riskLevel: response.risk_level
-        }
-      ]);
-    } catch (error) {
-      setChat(prev => [...prev, { role: 'bot', text: "Sorry, I encountered an error. Please try again." }]);
-    } finally {
-      setLoading(false);
-    }
+    await sendMessage(userMsg, locale);
   };
 
   const handleSpeak = async (text: string, index: number) => {
@@ -140,6 +121,12 @@ export const Assistant: React.FC = () => {
             className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-rose-500 text-white shadow-md hover:bg-rose-600 active:scale-95 transition-all"
           >
             <Mic size={14}/> {locale === 'bn' ? 'ভয়েস সহকারী' : 'Voice Assistant'}
+          </button>
+          <button
+            onClick={handleClearHistory}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-gray-500 text-white shadow-md hover:bg-gray-600 active:scale-95 transition-all cursor-pointer"
+          >
+            <History size={14}/> {locale === 'bn' ? 'ইতিহাস মুছুন' : 'Clear Chat'}
           </button>
           <div className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wide bg-teal-600 text-white shadow-md">
             <MessageSquare size={14}/> {t('ai.contextAware')}

@@ -35,6 +35,20 @@ export class AIService {
     return response;
   }
 
+  static async getChatHistory(): Promise<any[]> {
+    const response = await apiFetch<any[]>('/api/ai/history', {
+      method: 'GET'
+    });
+    return response || [];
+  }
+
+  static async clearChatHistory(): Promise<{ success: boolean }> {
+    const response = await apiFetch<{ success: boolean }>('/api/ai/history', {
+      method: 'DELETE'
+    });
+    return response;
+  }
+
   static async getHealthInsights(data: HealthData, locale: Language): Promise<string[]> {
     try {
       const response = await apiFetch<{ insights: string[] }>('/api/ai/insights', {

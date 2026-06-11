@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Loader2, ArrowRight, AlertCircle, Sparkles, CheckCircle, Phone, Users, Stethoscope, ShoppingBag, Shield, Eye, EyeOff, Check, X, Apple, Languages, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { db } from '../services/db';
 import { useTranslations } from '../i18n/I18nContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Logo } from '../constants';
@@ -30,6 +31,20 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState<UserRole>('mother');
+  const [specialtyId, setSpecialtyId] = useState<number | string>('');
+  const [specialtiesList, setSpecialtiesList] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    const fetchSpecialties = async () => {
+      try {
+        const list = await db.getSpecialties();
+        setSpecialtiesList(list);
+      } catch (err) {
+        console.error('Failed to load specialties', err);
+      }
+    };
+    fetchSpecialties();
+  }, []);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -209,7 +224,15 @@ const Register: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await register(sanitizedName, sanitizedEmail, sanitizedPhone, password, role);
+      await register(
+        sanitizedName,
+        sanitizedEmail,
+        sanitizedPhone,
+        password,
+        role,
+        undefined,
+        role === 'doctor' && specialtyId ? Number(specialtyId) : undefined
+      );
       navigate('/dashboard');
     } catch (err: any) {
       const errorMessage = err.message || t('auth.error');
@@ -336,6 +359,33 @@ const Register: React.FC = () => {
                 <span className="font-medium text-gray-600 dark:text-gray-350">{roles.find(r => r.value === role)?.description}</span>
               </div>
             </div>
+
+            {role === 'doctor' && (
+              <div className="space-y-1 animate-in fade-in slide-in-from-top duration-300">
+                <label
+                  className="text-[9px] font-bold uppercase tracking-widest ml-2"
+                  style={{ color: accentColor }}
+                >
+                  Doctor Specialty
+                </label>
+                <div className="relative group">
+                  <select
+                    value={specialtyId}
+                    onChange={(e) => setSpecialtyId(e.target.value)}
+                    required
+                    style={getFieldStyle(Boolean(specialtyId), false)}
+                    className="peer w-full pl-3 pr-8 py-2.5 text-sm border-2 rounded-lg transition-colors outline-none font-medium text-gray-905 dark:text-gray-100 bg-white dark:bg-[#16171A]"
+                  >
+                    <option value="" className="text-gray-400">Select Specialty...</option>
+                    {specialtiesList.map((spec) => (
+                      <option key={spec.id} value={spec.id}>
+                        {spec.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
 
             {/* Two Column Layout for Name and Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
