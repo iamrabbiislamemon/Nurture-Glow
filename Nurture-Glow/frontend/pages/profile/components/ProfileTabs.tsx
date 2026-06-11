@@ -55,7 +55,7 @@ const ProfileTabs: React.FC<ProfileTabsProps> = (props) => {
   return (
     <div className="space-y-8 overflow-hidden">
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+      <div className="flex flex-wrap gap-3 pb-4 border-b border-[#C9A961]/25 dark:border-slate-800/80">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = props.activeTab === tab.id;
@@ -63,13 +63,13 @@ const ProfileTabs: React.FC<ProfileTabsProps> = (props) => {
             <button
               key={tab.id}
               onClick={() => props.onTabChange(tab.id)}
-              className={`flex items-center gap-2 px-6 py-3 font-bold text-sm transition-all border-b-2 ${
+              className={`flex items-center gap-2.5 px-6 py-3.5 font-serif font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-300 cursor-pointer border-none ${
                 isActive
-                  ? 'text-amber-600 border-amber-600'
-                  : 'text-slate-600 border-transparent hover:text-slate-700 hover:border-slate-300'
+                  ? 'bg-gradient-to-r from-[#1B4D3E] to-[#143B2F] text-white shadow-md shadow-[#1B4D3E]/20 dark:from-[#C9A961] dark:to-[#B3934A] dark:text-[#0B0F19]'
+                  : 'text-slate-600 hover:text-[#1B4D3E] dark:text-slate-400 dark:hover:text-[#C9A961] bg-white/40 hover:bg-white/80 dark:bg-slate-900/30 dark:hover:bg-slate-900/50 border border-slate-200 dark:border-slate-800'
               }`}
             >
-              <Icon size={18} />
+              <Icon size={16} />
               {tab.label}
             </button>
           );

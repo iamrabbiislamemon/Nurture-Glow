@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Calendar as CalendarIcon, Clock, Video, MapPin, User, ChevronLeft, ChevronRight, 
-  CheckCircle2, XCircle, Search, Globe, AlertCircle, Info, ChevronDown, Trash2, Star
+  CheckCircle2, XCircle, Search, Globe, AlertCircle, Info, ChevronDown, Trash2, Star,
+  Stethoscope
 } from 'lucide-react';
 import { db } from '../services/db';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,9 +14,17 @@ import VideoSessionButton from '../components/appointments/VideoSessionButton';
 const Appointments: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslations();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const specialtyQuery = searchParams.get('specialty');
   const [activeTab, setActiveTab] = useState<'online' | 'offline' | 'my'>('online');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+
+  useEffect(() => {
+    if (specialtyQuery && activeTab === 'my') {
+      setActiveTab('online');
+    }
+  }, [specialtyQuery]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [bookingData, setBookingData] = useState({ time: '', notes: '' });
@@ -75,8 +85,9 @@ const Appointments: React.FC = () => {
   };
 
   const filteredDoctors = doctors.filter(doc => {
-    if (activeTab === 'online') return doc.type === 'Online' || doc.type === 'Both';
-    if (activeTab === 'offline') return doc.type === 'Offline' || doc.type === 'Both';
+    if (activeTab === 'online' && !(doc.type === 'Online' || doc.type === 'Both')) return false;
+    if (activeTab === 'offline' && !(doc.type === 'Offline' || doc.type === 'Both')) return false;
+    if (specialtyQuery && doc.specialty !== specialtyQuery) return false;
     return true;
   });
 
@@ -520,6 +531,30 @@ const Appointments: React.FC = () => {
 
         {/* Main: Content Area */}
         <div className="lg:col-span-8 space-y-6">
+          {activeTab !== 'my' && specialtyQuery && (
+            <div className="flex items-center justify-between bg-teal-50 border border-teal-100/50 px-6 py-4 rounded-3xl animate-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-teal-600/10 text-teal-700 rounded-2xl">
+                  <Stethoscope size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">Active Filter</p>
+                  <p className="text-sm font-bold text-teal-800">Specialty: {specialtyQuery}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const newParams = new URLSearchParams(searchParams);
+                  newParams.delete('specialty');
+                  setSearchParams(newParams);
+                }}
+                className="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-650 hover:text-gray-800 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+              >
+                Show All Specialties
+              </button>
+            </div>
+          )}
           {activeTab !== 'my' ? (
             filteredDoctors.length === 0 ? (
               <div className="bg-white p-16 rounded-3xl text-center border-2 border-dashed border-gray-100 space-y-4 animate-in fade-in col-span-full">

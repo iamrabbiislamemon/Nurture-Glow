@@ -287,6 +287,15 @@ export const db = {
     }
   },
 
+  async getSpecialties(): Promise<any[]> {
+    try {
+      return getList<any>('/api/catalog/specialties');
+    } catch (err) {
+      console.error('Failed to fetch specialties:', err);
+      return [];
+    }
+  },
+
   async getDoctorReviews(_userId: string): Promise<DoctorReview[]> {
     return getList<DoctorReview>('/api/doctor-reviews');
   },

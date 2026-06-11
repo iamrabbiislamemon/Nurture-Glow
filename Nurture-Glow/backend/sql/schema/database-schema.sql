@@ -347,13 +347,20 @@ CREATE TABLE IF NOT EXISTS `doctor_specialties` (
 -- Doctors table
 CREATE TABLE IF NOT EXISTS `doctors` (
   `id` VARCHAR(36) NOT NULL PRIMARY KEY,
+  `name` VARCHAR(255) NULL,
   `full_name` VARCHAR(255) NOT NULL,
   `specialty_id` INT,
+  `specialization` VARCHAR(255) NULL,
+  `hospital` VARCHAR(255) NULL,
+  `location` VARCHAR(255) NULL,
+  `experience_years` INT NULL,
   `phone` VARCHAR(20),
+  `contact_number` VARCHAR(20) NULL,
   `email` VARCHAR(255),
   `fee_amount` DECIMAL(10, 2),
   `verified` BOOLEAN DEFAULT FALSE,
   `rating` DECIMAL(3, 2),
+  `available_time` VARCHAR(255) NULL,
   `availability_status` VARCHAR(50) DEFAULT 'available',
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -368,6 +375,7 @@ CREATE TABLE IF NOT EXISTS `doctor_availability_slots` (
   `start_time` TIME,
   `end_time` TIME,
   `slot_duration_minutes` INT DEFAULT 30,
+  `max_consultations` INT DEFAULT 10,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`doctor_id`) REFERENCES `doctors` (`id`) ON DELETE CASCADE
 );

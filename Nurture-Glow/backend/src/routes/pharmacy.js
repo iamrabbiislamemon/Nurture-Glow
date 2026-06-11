@@ -39,7 +39,7 @@ export function createPharmacyRouter({ requireAuth, requireRole }) {
         name: 'Pharmacy Owner',
         email: req.user.email || 'pharmacy@nurtureglow.com',
         phone: '+880-1234-567890',
-        avatar: `https://picsum.photos/seed/${pharmacyId}/100/100`,
+        avatar: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiNFMkU4RjAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjkuNSIgcj0iMy41IiBmaWxsPSIjOTRBM0I4Ii8+PHBhdGggZD0iTTEyIDE0LjVjLTQgMC03LjUgMi03LjUgNXYxLjVoMTV2LTEuNWMwLTMtMy41LTUtNy41LTV6IiBmaWxsPSIjOTRBM0I4Ii8+PC9zdmc+',
         verificationStatus: 'Verified'
       };
       

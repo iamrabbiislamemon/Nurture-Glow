@@ -43,7 +43,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     },
     {
       label: t('profile.overview.items.profilePicture'),
-      completed: !!(user?.avatar && user.avatar !== 'default-avatar'),
+      completed: !!(user?.avatar && user.avatar !== 'default-avatar' && !user.avatar.startsWith('data:image/svg+xml')),
       required: true
     },
     {

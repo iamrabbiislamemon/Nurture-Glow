@@ -10,6 +10,7 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import { query, ensureChatHistoryTable, pool } from './db.js';
 import { seedDatabase } from './seed.js';
 import { attachSignaling } from './signaling.js';
@@ -295,6 +296,8 @@ async function assertCoreTables() {
   }
 }
 
+const DEFAULT_GENDER_UNIFIED_AVATAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiNFMkU4RjAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjkuNSIgcj0iMy41IiBmaWxsPSIjOTRBM0I4Ii8+PHBhdGggZD0iTTEyIDE0LjVjLTQgMC03LjUgMi03LjUgNXYxLjVoMTV2LTEuNWMwLTMtMy41LTUtNy41LTV6IiBmaWxsPSIjOTRBM0I4Ii8+PC9zdmc+';
+
 async function getUserProfile(userId) {
   const rows = await query(
     `SELECT u.id, u.phone, u.email, u.status, u.role, p.full_name, p.preferred_language
@@ -322,7 +325,7 @@ async function getUserProfile(userId) {
     email: row.email,
     name: row.full_name || 'User',
     healthId: `NG-${row.id.slice(0, 8).toUpperCase()}`,
-    avatar: meta.avatar || `https://picsum.photos/seed/${row.id}/100/100`,
+    avatar: meta.avatar || DEFAULT_GENDER_UNIFIED_AVATAR,
     verified: verificationStatus,
     preferredLanguage: row.preferred_language || 'en',
     role: normalizeRoleValue(row.role || 'mother')
@@ -402,6 +405,15 @@ async function bootstrap() {
   await ensureAppTables();
   await ensureChatHistoryTable();
   await seedAppData();
+
+  // Auto-start the Python RAG HTTP server in the background to eliminate startup latency
+  const pythonServerPath = path.resolve(__dirname, '../../../cloud_rag/rag_server.py');
+  console.log(`[RAG Server] Auto-starting background RAG HTTP server: ${pythonServerPath}`);
+  const ragServerProcess = spawn('python', [pythonServerPath], {
+    detached: true,
+    stdio: 'ignore'
+  });
+  ragServerProcess.unref();
   
   console.log('Verifying email configuration...');
   const emailConfigValid = await verifyEmailConfig();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Languages, LogOut } from 'lucide-react';
+import { Search, Languages, LogOut, Stethoscope } from 'lucide-react';
 import { Logo } from '../../constants';
 import type { WorkspaceMenuSection, CategorizedMenu } from './types';
 import type { Language } from '../../types';

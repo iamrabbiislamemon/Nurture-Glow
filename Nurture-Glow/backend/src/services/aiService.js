@@ -1,4 +1,4 @@
-﻿import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { query, logChatHistory } from '../db.js';
 import { classifyIntent, routeMessage } from '../ai/orchestrator.js';
 
@@ -165,7 +165,7 @@ export async function handleAiChat({
     intent,
     userData,
     allowCloud,
-    timeoutMs: 20000
+    timeoutMs: 60000
   });
 
   const finalText = appendDisclaimer(result.text, normalizedLocale);

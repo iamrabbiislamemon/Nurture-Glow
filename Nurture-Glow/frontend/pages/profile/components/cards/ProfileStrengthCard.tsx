@@ -32,14 +32,14 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
   const strokeDashoffset = circumference - (completion / 100) * circumference;
 
   return (
-    <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all">
+    <div className="bg-white dark:bg-[#121826] rounded-3xl p-8 border border-[#C9A961]/25 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-gradient-to-br from-teal-100 to-[#BFE6DA]/40 rounded-2xl text-teal-600">
+        <div className="p-3 bg-gradient-to-br from-teal-50 to-[#BFE6DA]/20 dark:from-emerald-950/20 dark:to-emerald-900/10 rounded-2xl text-[#1B4D3E] dark:text-emerald-400">
           <TrendingUp size={24} />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-800">Profile Strength</h3>
-          <p className="text-xs text-gray-400 font-medium mt-1">Complete your profile</p>
+          <h3 className="text-lg font-serif font-black text-[#1B4D3E] dark:text-[#C9A961]">Profile Strength</h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-1">Complete your profile checklist</p>
         </div>
       </div>
 
@@ -55,6 +55,7 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
               fill="none"
               stroke="#f3f4f6"
               strokeWidth="6"
+              className="dark:stroke-slate-900"
             />
             {/* Progress circle */}
             <circle
@@ -71,33 +72,33 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
             />
             <defs>
               <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#14b8a6" />
-                <stop offset="100%" stopColor="#BFE6DA" />
+                <stop offset="0%" stopColor="#1B4D3E" className="dark:stop-[#C9A961]" />
+                <stop offset="100%" stopColor="#C9A961" className="dark:stop-[#BFE6DA]" />
               </linearGradient>
             </defs>
           </svg>
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold text-teal-600">{completion}%</span>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Complete</span>
+            <span className="text-3xl font-serif font-black text-[#1B4D3E] dark:text-[#C9A961]">{completion}%</span>
+            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Complete</span>
           </div>
         </div>
 
         {/* Status text */}
         <div className="text-center">
-          <p className="text-sm font-bold text-gray-800">
+          <p className="text-sm font-bold text-gray-800 dark:text-white">
             {completedItems} of {items.length} items
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-[#C9A961] font-serif italic mt-1">
             {allRequiredComplete ? '✓ All required items complete' : 'Add required items to get verified'}
           </p>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-8">
+      <div className="w-full h-2 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden mb-8">
         <div
-          className="h-full bg-gradient-to-r from-teal-500 to-[#BFE6DA] transition-all duration-500"
+          className="h-full bg-gradient-to-r from-[#1B4D3E] via-[#C9A961] to-[#1B4D3E] dark:from-[#C9A961] dark:via-[#BFE6DA] dark:to-[#C9A961] transition-all duration-500"
           style={{ width: `${completion}%` }}
         />
       </div>
@@ -107,13 +108,13 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
         {/* Completed Items */}
         {items.filter(item => item.completed).length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-              <Check size={14} className="text-green-600" />
+            <h4 className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Check size={14} className="text-green-600 dark:text-green-400" />
               Completed
             </h4>
             <div className="space-y-2 pl-6">
               {items.map((item, idx) => item.completed && (
-                <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                <div key={idx} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                   <span>{item.label}</span>
                 </div>
@@ -125,14 +126,14 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
         {/* Missing Items */}
         {items.filter(item => !item.completed).length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-              <Lock size={14} className="text-gray-400" />
+            <h4 className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Lock size={14} className="text-slate-400 dark:text-slate-600" />
               Missing Items
             </h4>
             <div className="space-y-2 pl-6">
               {items.map((item, idx) => !item.completed && (
-                <div key={idx} className="flex items-center gap-2 text-xs text-gray-500">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                <div key={idx} className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-500">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-slate-800"></div>
                   <span>
                     {item.label}
                     {item.required && <span className="text-red-500 ml-1">*</span>}
@@ -144,7 +145,7 @@ const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
         )}
       </div>
 
-      <p className="text-xs text-gray-400 mt-6 pt-6 border-t border-gray-100">
+      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-6 pt-6 border-t border-slate-100 dark:border-slate-850">
         * Required items needed for full verification
       </p>
     </div>
