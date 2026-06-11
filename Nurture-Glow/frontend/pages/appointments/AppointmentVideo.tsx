@@ -4,6 +4,7 @@ import {
   Video, VideoOff, Mic, MicOff, PhoneOff, ArrowLeft, AlertCircle, Clock
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { API_BASE } from '../../constants';
 import { AppointmentService } from '../../services/appointmentService';
 import type { Appointment } from '../../types';
 
@@ -42,7 +43,7 @@ const AppointmentVideo: React.FC = () => {
   const getWsUrl = useCallback(() => {
     const loc = window.location;
     const protocol = loc.protocol === 'https:' ? 'wss:' : 'ws:';
-    const apiBase = import.meta.env.VITE_API_URL || `${loc.protocol}//${loc.hostname}:3000`;
+    const apiBase = API_BASE;
     try {
       const url = new URL(apiBase);
       return `${protocol}//${url.host}/ws/signaling`;

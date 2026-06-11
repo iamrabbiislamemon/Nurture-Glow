@@ -8,6 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { AIProvider } from './contexts/AIContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import { ApiSwitcher } from './components/ApiSwitcher';
 
 const App: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ const App: React.FC = () => {
               <CartProvider>
                 <Router>
                   <Layout />
+                  <ApiSwitcher />
                 </Router>
               </CartProvider>
             </AIProvider>

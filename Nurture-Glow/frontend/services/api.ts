@@ -1,5 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+import { API_BASE } from '../constants';
 const PHP_API_BASE = import.meta.env.VITE_PHP_API_URL || API_BASE;
+
 
 const TOKEN_KEY = 'ng_auth_token';
 const USER_KEY = 'ng_auth_user';

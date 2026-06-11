@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (identifier: string, password: string) => Promise<void>;
-  register: (name: string, email: string, phone: string, password: string, role?: string, inviteCode?: string) => Promise<void>;
+  register: (name: string, email: string, phone: string, password: string, role?: string, inviteCode?: string, specialtyId?: number | string) => Promise<void>;
   logout: () => void;
   updateAvatar: (file: File) => Promise<void>;
   updateName: (name: string) => Promise<void>;
@@ -65,11 +65,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     phone: string,
     password: string,
     role: string = 'mother',
-    inviteCode?: string
+    inviteCode?: string,
+    specialtyId?: number | string
   ) => {
     const data = await apiFetch<{ token: string; user: User }>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, phone, password, role, inviteCode })
+      body: JSON.stringify({ name, email, phone, password, role, inviteCode, specialtyId })
     });
     authStorage.setToken(data.token);
     authStorage.setUser(data.user);

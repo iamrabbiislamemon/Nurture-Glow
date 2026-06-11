@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle, XCircle, AlertCircle, ArrowLeft } from 'lucide-react';
-import { Logo } from '../constants';
+import { Logo, API_BASE } from '../constants';
 import { checkPasswordStrength, validatePassword } from '../utils/validation';
 
 const ResetPassword: React.FC = () => {
@@ -72,7 +72,7 @@ const ResetPassword: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/auth/reset-password', {
+      const response = await fetch(`${API_BASE}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword: password }),

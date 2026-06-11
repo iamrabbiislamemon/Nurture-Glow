@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Mic, MicOff, Square, Sparkles, AlertCircle, Loader2, Send, Keyboard } from 'lucide-react';
+import { API_BASE } from '../../constants';
 
 type VoiceState = 'idle' | 'recording' | 'transcribing' | 'thinking' | 'speaking';
 
@@ -40,7 +41,7 @@ export const LiveAssistant: React.FC<{ onClose: () => void }> = ({ onClose }) =>
   };
 
   const getAuthToken = (): string | null => localStorage.getItem('ng_auth_token');
-  const getApiUrl = (): string => (import.meta.env.VITE_API_URL as string) || 'http://localhost:4000';
+  const getApiUrl = (): string => API_BASE;
 
   const startRecording = useCallback(async () => {
     setErrorMessage(null);

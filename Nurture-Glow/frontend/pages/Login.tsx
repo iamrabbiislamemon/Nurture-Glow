@@ -4,7 +4,7 @@ import { Mail, Lock, Loader2, ArrowRight, AlertCircle, Shield, X, CheckCircle2, 
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslations } from '../i18n/I18nContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { Logo } from '../constants';
+import { Logo, API_BASE } from '../constants';
 import { validateEmail, validatePhone, RateLimiter, formatTimeRemaining, sanitizeInput } from '../utils/validation';
 
 // Rate limiter for login attempts
@@ -230,7 +230,7 @@ const Login: React.FC = () => {
 
     setAppealSending(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/auth/suspension-appeal`, {
+      const response = await fetch(`${API_BASE}/auth/suspension-appeal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ appealToken, message: appealMessage.trim(), identifier: safeIdentifier })
@@ -263,7 +263,7 @@ const Login: React.FC = () => {
 
     try {
       // Call backend API for password reset
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/auth/forgot-password`, {
+      const response = await fetch(`${API_BASE}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: sanitizeInput(forgotEmail.trim()) })

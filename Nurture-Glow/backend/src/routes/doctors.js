@@ -217,6 +217,7 @@ export function createDoctorsRouter({ requireAuth, requireRole, requireConsentFo
           req.user?.email ||
           null,
         bmdcNumber: profileData.bmdcNumber || profileData.bmdc || profileData.registrationNumber || null,
+        specialtyId: doctorRow.specialty_id || null,
         specialization: specialtyName || profileData.specialty || profileData.specialization || null,
         verified,
         profileImage: profileData.avatar || profileData.profileImage || null,

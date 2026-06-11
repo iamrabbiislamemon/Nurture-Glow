@@ -2,6 +2,7 @@
 // Admin API Service — Typed, using centralized apiFetch
 // ============================================================================
 import { apiFetch } from './api';
+import { API_BASE } from '../constants';
 import type {
   SystemDashboardResponse,
   UsersListResponse,
@@ -49,7 +50,6 @@ async function fetchBlob(path: string): Promise<Blob> {
   // For blob downloads we still need raw fetch for the blob() call,
   // but we reuse the same auth token logic.
   const TOKEN_KEY = 'ng_auth_token';
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
   const token = localStorage.getItem(TOKEN_KEY);
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;

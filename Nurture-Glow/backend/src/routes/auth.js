@@ -104,6 +104,16 @@ export function createAuthRouter({ JWT_SECRET, ADMIN_INVITE_CODE, requireAuth, c
         await query('INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)', [userId, roleRows[0].id]);
       }
 
+      if (normalizedRole === 'doctor') {
+        const doctorId = uuidv4();
+        const specialtyVal = req.body.specialtyId ? Number(req.body.specialtyId) : null;
+        await query(
+          `INSERT INTO doctors (id, user_id, full_name, email, phone, fee_amount, specialty_id, verified, availability_status, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+          [doctorId, userId, nameValidation.value, normalizedEmail || null, normalizedPhone || null, 0, specialtyVal, false, 'available']
+        );
+      }
+
       const user = await getUserProfile(userId);
       const token = jwt.sign({ sub: userId, role: user?.role }, JWT_SECRET, { expiresIn: '7d' });
 

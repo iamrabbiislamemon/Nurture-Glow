@@ -394,6 +394,26 @@ const DoctorDashboard: React.FC = () => {
         {/* Tab Content */}
         {activeTab === 'overview' && (
           <div className="space-y-6 animate-hero-content">
+            {(!profile.specialization || profile.specialization === 'Specialization not set') && (
+              <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-250/50 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-white">
+                    <AlertCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-amber-900">Specialty Not Set</h3>
+                    <p className="text-xs text-amber-700">Please set your medical specialty so patients can find you and book appointments.</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setTab('settings')}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-md hover:scale-[1.02] cursor-pointer"
+                >
+                  Set Specialty Now
+                </button>
+              </div>
+            )}
+
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/60 backdrop-blur-sm rounded-2xl p-4 border border-emerald-200/50">
