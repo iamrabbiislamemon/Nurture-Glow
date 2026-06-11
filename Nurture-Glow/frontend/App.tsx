@@ -6,6 +6,7 @@ import { I18nProvider } from './i18n/I18nContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { AIProvider } from './contexts/AIContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const App: React.FC = () => {
@@ -14,11 +15,13 @@ const App: React.FC = () => {
       <I18nProvider>
         <ThemeProvider>
           <AuthProvider>
-            <CartProvider>
-              <Router>
-                <Layout />
-              </Router>
-            </CartProvider>
+            <AIProvider>
+              <CartProvider>
+                <Router>
+                  <Layout />
+                </Router>
+              </CartProvider>
+            </AIProvider>
           </AuthProvider>
         </ThemeProvider>
       </I18nProvider>

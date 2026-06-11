@@ -11,22 +11,13 @@ import { AIService, RiskLevel } from '../services/aiService';
 import { LiveAssistant } from '../components/ai/LiveAssistant';
 import { speakTextNative, playPcmAudio } from '../services/ttsService';
 
-type ChatEntry = {
-  role: 'user' | 'bot';
-  text: string;
-  sources?: any[];
-  modelUsed?: string;
-  intent?: string;
-  riskLevel?: RiskLevel;
-};
+import { useAI, ChatEntry } from '../contexts/AIContext';
 
 export const Assistant: React.FC = () => {
   const { t, locale } = useTranslations();
+  const { chat, loading, sendMessage, clearHistory } = useAI();
   const [msg, setMsg] = useState('');
-  const [chat, setChat] = useState<ChatEntry[]>([]);
-  const [loading, setLoading] = useState(false);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
-  const [includeContext] = useState(true);
   const [showLive, setShowLive] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -38,30 +29,6 @@ export const Assistant: React.FC = () => {
     scrollToBottom();
   }, [chat, loading]);
 
-  // Load chat history on mount
-  useEffect(() => {
-    const loadHistory = async () => {
-      try {
-        const history = await AIService.getChatHistory();
-        const entries: ChatEntry[] = [];
-        history.forEach((h: any) => {
-          entries.push({ role: 'user', text: h.message });
-          entries.push({
-            role: 'bot',
-            text: h.response,
-            modelUsed: h.model_used,
-            intent: h.intent,
-            riskLevel: h.risk_level
-          });
-        });
-        setChat(entries);
-      } catch (error) {
-        console.error('Error loading chat history:', error);
-      }
-    };
-    loadHistory();
-  }, []);
-
   const handleClearHistory = async () => {
     const confirmClear = window.confirm(
       locale === 'bn' 
@@ -69,40 +36,14 @@ export const Assistant: React.FC = () => {
         : 'Are you sure you want to clear your entire chat history?'
     );
     if (!confirmClear) return;
-
-    try {
-      await AIService.clearChatHistory();
-      setChat([]);
-    } catch (error) {
-      console.error('Failed to clear chat history:', error);
-    }
+    await clearHistory();
   };
 
   const handleSend = async () => {
-    if(!msg.trim()) return;
+    if (!msg.trim()) return;
     const userMsg = msg;
     setMsg('');
-    setChat(prev => [...prev, { role: 'user', text: userMsg }]);
-    setLoading(true);
-
-    try {
-      const response = await AIService.chatAssistant(userMsg, locale, includeContext);
-      setChat(prev => [
-        ...prev,
-        {
-          role: 'bot',
-          text: response.text,
-          sources: response.sources,
-          modelUsed: response.model_used,
-          intent: response.intent,
-          riskLevel: response.risk_level
-        }
-      ]);
-    } catch (error) {
-      setChat(prev => [...prev, { role: 'bot', text: "Sorry, I encountered an error. Please try again." }]);
-    } finally {
-      setLoading(false);
-    }
+    await sendMessage(userMsg, locale);
   };
 
   const handleSpeak = async (text: string, index: number) => {
