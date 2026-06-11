@@ -18,6 +18,7 @@ export const translations = {
       assistant: "Ask Assistant",
       logout: "Logout",
       ambulance: "Ambulance Dispatch",
+      specialties: "Specialist Sectors",
     },
     navbar: {
       home: "Home",
@@ -817,6 +818,7 @@ export const translations = {
       assistant: "স্বাস্থ্য সহকারী",
       logout: "বিদায় নিন",
       ambulance: "জরুরি অ্যাম্বুলেন্স",
+      specialties: "বিশেষজ্ঞ বিভাগসমূহ",
     },    navbar: {
       home: "হোম",
       about: "আমাদের সম্পর্কে",

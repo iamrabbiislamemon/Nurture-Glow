@@ -16,6 +16,7 @@ import { createConsentRouter } from './consent.js';
 import { createPrescriptionsRouter } from './prescriptions.js';
 import { createEmergencyRouter } from './emergency.js';
 import { createAmbulanceRouter } from './ambulance.js';
+import mcpRouter from './mcp.js';
 
 export function createAppRouter(deps) {
   const router = express.Router();
@@ -38,6 +39,7 @@ export function createAppRouter(deps) {
   router.use('/', createPrescriptionsRouter(deps));
   router.use('/', createEmergencyRouter(deps));
   router.use('/', createAmbulanceRouter(deps));
+  router.use('/mcp', mcpRouter);
 
   return router;
 }

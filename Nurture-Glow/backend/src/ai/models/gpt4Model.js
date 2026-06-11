@@ -1,4 +1,4 @@
-﻿const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
 const buildMessages = ({ message, locale, context }) => {
   const language = locale === 'bn' ? 'Bengali' : 'English';
@@ -39,20 +39,34 @@ export async function runGpt4({ message, locale = 'en', context, timeoutMs = 300
     throw new Error('OPENAI_API_KEY is not configured');
   }
 
+  const baseUrl = (process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, '');
+  const completionsUrl = `${baseUrl}/chat/completions`;
+  const modelToUse = process.env.OPENAI_MODEL || DEFAULT_MODEL;
+
+  const payload = {
+    model: modelToUse,
+    messages: buildMessages({ message, locale, context }),
+    temperature: 0.4,
+    max_tokens: 320
+  };
+
+  if (modelToUse === 'nvidia/nemotron-3-ultra-550b-a55b') {
+    payload.extra_body = {
+      chat_template_kwargs: { enable_thinking: true },
+      reasoning_budget: 16384
+    };
+    payload.max_tokens = 4096;
+  }
+
   const response = await fetchWithTimeout(
-    'https://api.openai.com/v1/chat/completions',
+    completionsUrl,
     {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: DEFAULT_MODEL,
-        messages: buildMessages({ message, locale, context }),
-        temperature: 0.4,
-        max_tokens: 320
-      })
+      body: JSON.stringify(payload)
     },
     timeoutMs
   );

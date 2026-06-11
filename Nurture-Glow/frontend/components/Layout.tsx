@@ -1,9 +1,10 @@
-import React, { useState, Suspense, useMemo } from 'react';
+import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Mic, Menu, Languages, Sun, Moon } from 'lucide-react';
 import { useTranslations } from '../i18n/I18nContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { db } from '../services/db';
 import { useVoiceCommands } from './voice/useVoiceCommands';
 import { NotificationBell } from './notifications/NotificationBell';
 import { GlobalSearch } from './search/GlobalSearch';
@@ -53,6 +54,7 @@ const Assistant = React.lazy(() => import('../pages/Assistant').then(m => ({ def
 const AppointmentVideo = React.lazy(() => import('../pages/appointments/AppointmentVideo'));
 const LanguageSettings = React.lazy(() => import('../pages/SettingsPages').then(m => ({ default: m.LanguageSettings })));
 const NotificationSettings = React.lazy(() => import('../pages/SettingsPages').then(m => ({ default: m.NotificationSettings })));
+const Specialties = React.lazy(() => import('../pages/Specialties'));
 const DoctorDashboard = React.lazy(() => import('../pages/dashboards/DoctorDashboard'));
 const PharmacistDashboard = React.lazy(() => import('../pages/dashboards/PharmacistDashboard'));
 const MerchandiserDashboard = React.lazy(() => import('../pages/dashboards/MerchandiserDashboard'));
@@ -388,6 +390,7 @@ const Layout: React.FC = () => {
                 <Route path="/assistant" element={<ProtectedRoute><Assistant /></ProtectedRoute>} />
                 <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
                 <Route path="/appointments/:id/video" element={<ProtectedRoute><AppointmentVideo /></ProtectedRoute>} />
+                <Route path="/specialties" element={<ProtectedRoute><Specialties /></ProtectedRoute>} />
                 <Route path="/vaccines" element={<ProtectedRoute><Vaccines /></ProtectedRoute>} />
                 <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
                 <Route path="/journal" element={<ProtectedRoute><Journal /></ProtectedRoute>} />

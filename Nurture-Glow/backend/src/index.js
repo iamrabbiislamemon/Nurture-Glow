@@ -10,6 +10,7 @@ import fs from 'fs/promises';
 import fsSync from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import { query, ensureChatHistoryTable, pool } from './db.js';
 import { seedDatabase } from './seed.js';
 import { attachSignaling } from './signaling.js';
@@ -404,6 +405,15 @@ async function bootstrap() {
   await ensureAppTables();
   await ensureChatHistoryTable();
   await seedAppData();
+
+  // Auto-start the Python RAG HTTP server in the background to eliminate startup latency
+  const pythonServerPath = path.resolve(__dirname, '../../../cloud_rag/rag_server.py');
+  console.log(`[RAG Server] Auto-starting background RAG HTTP server: ${pythonServerPath}`);
+  const ragServerProcess = spawn('python', [pythonServerPath], {
+    detached: true,
+    stdio: 'ignore'
+  });
+  ragServerProcess.unref();
   
   console.log('Verifying email configuration...');
   const emailConfigValid = await verifyEmailConfig();

@@ -119,6 +119,15 @@ export function createCatalogRouter({ requireAuth }) {
     });
   };
 
+  router.get('/catalog/specialties', async (req, res, next) => {
+    try {
+      const rows = await query('SELECT id, name, description FROM doctor_specialties ORDER BY name ASC');
+      res.json({ items: rows });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get('/catalog/:type', async (req, res, next) => {
     try {
       const map = {

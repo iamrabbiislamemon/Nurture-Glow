@@ -49,6 +49,7 @@ export function buildPatientMenu(t: (key: string) => string): MenuItem[] {
     { icon: <Zap size={20} />, label: t('nav.myths'), path: '/myths' },
     { icon: <ShoppingBag size={20} />, label: t('nav.pharmacy'), path: '/pharmacy' },
     { icon: <Truck size={20} />, label: t('nav.ambulance'), path: '/ambulance' },
+    { icon: <Stethoscope size={20} />, label: t('nav.specialties') || 'Specialist Sectors', path: '/specialties' },
   ];
 }
 
@@ -111,7 +112,7 @@ export function buildDriverMenu(): MenuItem[] {
 export function buildCategorizedMenu(items: MenuItem[]): CategorizedMenu {
   return {
     core: [items[0], items[1], items[2]],
-    health: [items[3], items[4], items[8], items[9], items[10], items[14]],
+    health: [items[3], items[4], items[8], items[9], items[10], items[14], items[15]],
     lifestyle: [items[5], items[7], items[12]],
     community: [items[6], items[11]],
     shopping: [items[13]],

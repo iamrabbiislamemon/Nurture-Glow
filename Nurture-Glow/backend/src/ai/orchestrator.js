@@ -1,44 +1,17 @@
 /**
- * AI Orchestrator — LOCAL-ONLY Mode (Ollama)
+ * AI Orchestrator — MCP Mode
  * 
- * Uses only local models (no cloud API calls):
- * 1. Ollama LLM — local AI model (mistral/gemma) for intelligent responses
- * 2. Risk Predictor — local heuristic scoring for monitoring/BP/glucose questions
- * 3. Fallback Knowledge Base — static responses if Ollama is unavailable
+ * Routes maternal health questions to:
+ * 1. Risk Predictor — local scoring for BP/glucose metrics
+ * 2. MCP Assistant (mcpModel.js) — hosted MCP tools + OpenAI (gpt-4o-mini)
+ * 3. Fallback Knowledge Base (fallbackModel.js) — static response template if offline/no API key configured
  * 
- * No OpenAI, HuggingFace, or any external API dependency.
- * Works 100% offline, private, zero cost.
+ * Works online with MCP tools, falls back to offline/static KB if credentials are missing or API is offline.
  */
 
-import { runOllama, isOllamaAvailable } from './models/ollamaModel.js';
+import { runMcpAssistant } from './models/mcpModel.js';
 import { runRiskPredictor } from './models/riskPredictorModel.js';
 import { runFallback } from './models/fallbackModel.js';
-
-// Cache Ollama availability (re-check every 60s)
-let ollamaAvailableCache = null;
-let ollamaCacheTime = 0;
-const OLLAMA_CACHE_TTL = 60000;
-
-function isOllamaEnabled() {
-  const val = String(process.env.ENABLE_OLLAMA || '').trim().toLowerCase();
-  return ['1', 'true', 'yes', 'on'].includes(val);
-}
-
-async function checkOllama() {
-  if (!isOllamaEnabled()) return false;
-  const now = Date.now();
-  if (ollamaAvailableCache !== null && (now - ollamaCacheTime) < OLLAMA_CACHE_TTL) {
-    return ollamaAvailableCache;
-  }
-  ollamaAvailableCache = await isOllamaAvailable();
-  ollamaCacheTime = now;
-  if (ollamaAvailableCache) {
-    console.log('[AI] Ollama is available and ready.');
-  } else {
-    console.warn('[AI] Ollama not available — will use static knowledge base.');
-  }
-  return ollamaAvailableCache;
-}
 
 const sanitize = (value) => String(value || '').trim();
 
@@ -136,12 +109,11 @@ export async function routeMessage({
   locale = 'en',
   intent = 'general',
   userData,
-  allowCloud,
-  timeoutMs = 15000
+  allowCloud = true,
+  timeoutMs = 60000
 }) {
   const fallbackLocale = locale === 'bn' ? 'bn' : 'en';
   const contextSummary = buildContextSummary(userData);
-  const ollamaReady = await checkOllama();
 
   // ---------- LOCAL MODEL 1: Risk Predictor (heuristic scoring) ----------
   // Used for monitoring intent when user data is available
@@ -156,26 +128,24 @@ export async function routeMessage({
       if (riskResult) {
         let text = buildRiskText(riskResult, fallbackLocale);
 
-        // Enrich with Ollama guidance if available
-        if (ollamaReady) {
-          try {
-            const ollamaGuidance = await runOllama({
-              message: `Based on these health readings, provide brief additional guidance:\n${text}\n\nOriginal question: ${message}`,
-              locale: fallbackLocale,
-              context: buildContextSummary(userData, riskResult),
-              timeoutMs: Math.min(timeoutMs, 12000)
-            });
-            if (ollamaGuidance?.text) {
-              text = `${text}\n\n${ollamaGuidance.text}`;
-            }
-          } catch (ollamaErr) {
-            console.warn('[AI] Ollama enrichment failed, using risk data only:', ollamaErr?.message);
+        // Enrich with MCP Assistant guidance if available
+        try {
+          const mcpResult = await runMcpAssistant({
+            message: `Based on these health readings, provide brief additional guidance:\n${text}\n\nOriginal question: ${message}`,
+            locale: fallbackLocale,
+            context: buildContextSummary(userData, riskResult),
+            timeoutMs: Math.min(timeoutMs, 15000)
+          });
+          if (mcpResult?.text) {
+            text = `${text}\n\n${mcpResult.text}`;
           }
+        } catch (mcpErr) {
+          console.warn('[AI] MCP Assistant enrichment failed, using risk data only:', mcpErr?.message);
         }
 
         return {
           text,
-          modelUsed: 'ollama',
+          modelUsed: 'gpt4-mcp-enriched',
           intent,
           sources: [],
           riskLevel: riskResult.riskLevel
@@ -186,60 +156,40 @@ export async function routeMessage({
     }
   }
 
-  // ---------- LOCAL MODEL 2: Ollama LLM (primary) ----------
-  if (ollamaReady) {
-    console.log('[AI] Using Ollama local model.');
-    try {
-      const ollamaResult = await runOllama({
-        message,
-        locale: fallbackLocale,
-        context: contextSummary || undefined,
-        timeoutMs: Math.min(timeoutMs, 15000)
-      });
-      if (ollamaResult?.text) {
-        return {
-          text: ollamaResult.text,
-          modelUsed: 'ollama',
-          intent,
-          sources: [],
-          riskLevel: ollamaResult.riskLevel
-        };
-      }
-    } catch (ollamaErr) {
-      console.error('[AI] Ollama failed:', ollamaErr?.message || ollamaErr);
-      // Invalidate cache so next request re-checks
-      ollamaAvailableCache = null;
-    }
-  }
-
-  // ---------- FALLBACK: Static Knowledge Base ----------
-  console.log('[AI] Ollama unavailable, using static knowledge base.');
+  // ---------- PRIMARY MODEL: MCP + OpenAI Assistant ----------
   try {
-    const fallbackResult = await runFallback({
+    const mcpResult = await runMcpAssistant({
       message,
       locale: fallbackLocale,
-      intent,
-      context: contextSummary || undefined
+      context: contextSummary || undefined,
+      timeoutMs
     });
-    if (fallbackResult?.text) {
+    if (mcpResult?.text) {
       return {
-        text: fallbackResult.text,
-        modelUsed: 'local-ai',
+        text: mcpResult.text,
+        modelUsed: mcpResult.modelUsed || 'gpt4-mcp',
         intent,
         sources: [],
-        riskLevel: fallbackResult.riskLevel
+        riskLevel: mcpResult.riskLevel
       };
     }
-  } catch (fbErr) {
-    console.error('[AI] Local KB error:', fbErr?.message || fbErr);
+  } catch (mcpErr) {
+    console.error('[AI] MCP Assistant failed:', mcpErr?.message || mcpErr);
+    return {
+      text: `Error from MCP Server: ${mcpErr?.message || 'Unknown error'}`,
+      modelUsed: 'mcp-error',
+      intent,
+      sources: [],
+      riskLevel: undefined
+    };
   }
 
-  // Ultimate safety net — should never reach here
+  // Ultimate safety net
   return {
     text: fallbackLocale === 'bn'
       ? 'আমি এই মুহূর্তে আপনার প্রশ্নের উত্তর দিতে অক্ষম। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন অথবা আপনার ডাক্তারের সাথে যোগাযোগ করুন।'
       : 'I apologize, but I\'m having difficulty answering right now. Please try again in a moment, or contact your healthcare provider for immediate assistance.',
-    modelUsed: 'local-ai',
+    modelUsed: 'local-ai-error',
     intent,
     sources: [],
     riskLevel: undefined

@@ -662,7 +662,7 @@ const Dashboard: React.FC = () => {
 
         {/* Emergency Ambulance Shortcut Banner */}
         <Reveal y={30} delay={0.2}>
-          <div className="shake-on-hover bg-gradient-to-r from-red-500 via-rose-500 to-red-650 rounded-[32px] p-6 shadow-sm border border-red-200/10 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all duration-300">
+          <div className="shake-on-hover bg-gradient-to-r from-red-500 via-rose-500 to-red-600 rounded-[32px] p-6 shadow-sm border border-red-200/10 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-md transition-all duration-300">
             <div className="space-y-2 max-w-2xl text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
                 <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
@@ -681,7 +681,7 @@ const Dashboard: React.FC = () => {
             </div>
             <button
               onClick={() => navigate('/ambulance')}
-              className="shimmer-hover self-start md:self-center px-6 py-4 bg-white text-red-650 font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md hover:bg-red-50 hover:scale-102 transition-all cursor-pointer border-none shrink-0"
+              className="shimmer-hover self-start md:self-center px-6 py-4 bg-white text-red-600 dark:text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md hover:bg-red-50 hover:scale-102 transition-all cursor-pointer border-none shrink-0"
             >
               {locale === 'bn' ? 'অ্যাম্বুলেন্স ডিসপ্যাচ খুলুন' : 'Access Ambulance Dispatch'} &rarr;
             </button>
@@ -1131,7 +1131,7 @@ const Dashboard: React.FC = () => {
                           {vaccinesOverdueCount > 0 && (
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-700 font-medium">Overdue</span>
-                              <span className="font-bold text-red-650">{vaccinesOverdueCount}</span>
+                              <span className="font-bold text-red-600 dark:text-red-400">{vaccinesOverdueCount}</span>
                             </div>
                           )}
                           <button 
