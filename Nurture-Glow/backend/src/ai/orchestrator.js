@@ -33,6 +33,15 @@ const intentMatchers = {
     /\bsymptom\b/, /\bpain\b/, /\bfever\b/, /\bbleed\b/, /\bcramp\b/, /\bheadache\b/, /\bnausea\b/,
     /\bdizzy\b/, /\bshortness\b/, /\bpreeclampsia\b/, /\bgestational\b/, /\bdiabetes\b/, /\binfection\b/,
     /\bvaccine\b/, /\bmedication\b/, /\bmedicine\b/, /\btablet\b/
+  ],
+  doctor: [
+    /\bdoctor\b/i, /\bspecialist\b/i, /\bgynecologist\b/i, /\bgynacologist\b/i, /\bgynae\b/i,
+    /\bpediatrician\b/i, /\bpediatric\b/i, /\bpaediatrician\b/i, /\bpaediatric\b/i,
+    /\bnutritionist\b/i, /\bpharmacist\b/i, /\bconsult\b/i, /\brecommend\b/i, /\bphysician\b/i
+  ],
+  appointment: [
+    /\bappointment\b/i, /\bschedule\b/i, /\bslot\b/i, /\bslots\b/i, /\bbook\b/i,
+    /\bavailable\b/i, /\bavailability\b/i
   ]
 };
 

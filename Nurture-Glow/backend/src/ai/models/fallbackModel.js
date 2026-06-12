@@ -8,6 +8,8 @@
  * Guarantees: Every question gets a meaningful answer — no 503 errors.
  */
 
+import { query } from '../../db.js';
+
 const knowledgeBase = {
   en: {
     'mental-health': {
@@ -209,6 +211,93 @@ function findBestMatch(message, intent, locale) {
  * Run the fallback model — no API needed, always returns a response.
  */
 export async function runFallback({ message, locale = 'en', intent = 'general', context }) {
+  if (intent === 'doctor') {
+    try {
+      const msgLower = message.toLowerCase();
+      let specialty = '';
+      if (msgLower.includes('gyn')) {
+        specialty = 'Gynecologist';
+      } else if (msgLower.includes('pediatr') || msgLower.includes('paediatr') || msgLower.includes('child') || msgLower.includes('baby')) {
+        specialty = 'Pediatrician';
+      } else if (msgLower.includes('nutrition') || msgLower.includes('diet')) {
+        specialty = 'Nutritionist';
+      } else if (msgLower.includes('pharmac')) {
+        specialty = 'Pharmacist';
+      }
+
+      let sql = `
+        SELECT d.full_name, d.specialization, d.hospital, d.location, d.experience_years, d.phone, d.email, d.fee_amount, d.rating, d.availability_status, s.name AS specialty_name 
+        FROM doctors d 
+        LEFT JOIN doctor_specialties s ON d.specialty_id = s.id 
+        WHERE d.verified = TRUE
+      `;
+      let params = [];
+      if (specialty) {
+        sql += ` AND (s.name LIKE ? OR d.specialization LIKE ?)`;
+        params.push(`%${specialty}%`, `%${specialty}%`);
+      }
+      sql += ` LIMIT 5`;
+
+      const doctors = await query(sql, params);
+
+      if (doctors && doctors.length > 0) {
+        let text = locale === 'bn'
+          ? `**যাচাইকৃত ডাক্তারদের তালিকা**\n\nআপনার জন্য কিছু বিশেষজ্ঞ ডাক্তারের তথ্য নিচে দেওয়া হলো:\n\n`
+          : `**Verified Doctor Recommendations**\n\nHere are some qualified specialists recommended for you:\n\n`;
+
+        doctors.forEach((doc) => {
+          const ratingStar = doc.rating ? `⭐ ${Number(doc.rating).toFixed(1)}` : 'N/A';
+          const fee = doc.fee_amount ? `${doc.fee_amount} BDT` : 'N/A';
+          const exp = doc.experience_years ? `${doc.experience_years} years` : 'N/A';
+          const hospital = doc.hospital || doc.location || 'N/A';
+          const spec = doc.specialization || doc.specialty_name || 'Specialist';
+          
+          text += `### **${doc.full_name}** (${spec})\n`;
+          text += `- **Hospital/Location:** ${hospital}\n`;
+          text += `- **Experience:** ${exp} | **Rating:** ${ratingStar}\n`;
+          text += `- **Consultation Fee:** ${fee}\n`;
+          text += `- **Status:** ${doc.availability_status || 'Available'}\n`;
+          text += `- **Contact:** ${doc.email || doc.phone || 'N/A'}\n\n`;
+        });
+
+        text += locale === 'bn'
+          ? `*ডাক্তার বুকিং করতে বা পুরো সিডিউল দেখতে অনুগ্রহ করে প্রধান পোর্টালের "ডাক্তার" সেকশনে যান।*`
+          : `*To book a consultation slot, please navigate to the Doctors directory in the main portal.*`;
+
+        return {
+          text,
+          modelUsed: 'fallback-database',
+          sources: [],
+          riskLevel: undefined
+        };
+      } else {
+        const noDocsMsg = locale === 'bn'
+          ? `দুঃখিত, এই মুহূর্তে কোনো বিশেষজ্ঞ ডাক্তার পাওয়া যায়নি। অনুগ্রহ করে প্রধান পোর্টালের ডাক্তার সেকশনে দেখুন।`
+          : `I couldn't find any matching verified doctors in the database at the moment. Please visit the Doctors directory on the main portal.`;
+        return {
+          text: noDocsMsg,
+          modelUsed: 'fallback',
+          sources: [],
+          riskLevel: undefined
+        };
+      }
+    } catch (err) {
+      console.error('[AI Fallback] Failed to fetch doctors:', err.message);
+    }
+  }
+
+  if (intent === 'appointment') {
+    const appMsg = locale === 'bn'
+      ? `**অ্যাপয়েন্টমেন্ট বুকিং নির্দেশিকা**\n\nঅ্যাপয়েন্টমেন্ট বুক করার জন্য:\n1. প্রধান পোর্টালের **Doctors** সেকশনে যান।\n2. আপনার পছন্দের ডাক্তারের পাশে থাকা **View Schedule** বাটনে ক্লিক করুন।\n3. দিন এবং খালি সময়ের স্লট নির্বাচন করে বুকিং সম্পন্ন করুন।\n\nআপনার কি কোনো ডাক্তারের সময়সূচী বা স্লট জানতে সাহায্য লাগবে? ডাক্তারের নাম দিয়ে জিজ্ঞাসা করতে পারেন।`
+      : `**How to Book an Appointment**\n\nTo schedule a consultation:\n1. Go to the **Doctors** directory on the portal.\n2. Find your doctor and click **View Schedule**.\n3. Choose your preferred day and available 30-minute time slot to confirm your booking.\n\nWould you like to search for a specific specialist? Try asking "suggest a gynecologist".`;
+    return {
+      text: appMsg,
+      modelUsed: 'fallback-guided',
+      sources: [],
+      riskLevel: undefined
+    };
+  }
+
   const text = findBestMatch(message, intent, locale);
 
   // If we have user context, prepend a personalized note
