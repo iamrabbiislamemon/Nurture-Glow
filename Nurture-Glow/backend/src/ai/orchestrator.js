@@ -157,31 +157,44 @@ export async function routeMessage({
   }
 
   // ---------- PRIMARY MODEL: MCP + OpenAI Assistant ----------
+  const apiKey = process.env.OPENAI_API_KEY;
+  const isInvalidKey = !apiKey || apiKey.startsWith('eyJ');
+
+  if (!isInvalidKey) {
+    try {
+      const mcpResult = await runMcpAssistant({
+        message,
+        locale: fallbackLocale,
+        context: contextSummary || undefined,
+        timeoutMs
+      });
+      if (mcpResult?.text) {
+        return {
+          text: mcpResult.text,
+          modelUsed: mcpResult.modelUsed || 'gpt4-mcp',
+          intent,
+          sources: [],
+          riskLevel: mcpResult.riskLevel
+        };
+      }
+    } catch (mcpErr) {
+      console.error('[AI] MCP Assistant failed, falling back to offline model:', mcpErr?.message || mcpErr);
+    }
+  } else {
+    console.warn('[AI] OPENAI_API_KEY is not configured or is invalid (JWT token). Skipping MCP assistant.');
+  }
+
+  // ---------- FALLBACK MODEL: Offline Knowledge Base ----------
   try {
-    const mcpResult = await runMcpAssistant({
+    const fallbackResult = await runFallback({
       message,
       locale: fallbackLocale,
-      context: contextSummary || undefined,
-      timeoutMs
-    });
-    if (mcpResult?.text) {
-      return {
-        text: mcpResult.text,
-        modelUsed: mcpResult.modelUsed || 'gpt4-mcp',
-        intent,
-        sources: [],
-        riskLevel: mcpResult.riskLevel
-      };
-    }
-  } catch (mcpErr) {
-    console.error('[AI] MCP Assistant failed:', mcpErr?.message || mcpErr);
-    return {
-      text: `Error from MCP Server: ${mcpErr?.message || 'Unknown error'}`,
-      modelUsed: 'mcp-error',
       intent,
-      sources: [],
-      riskLevel: undefined
-    };
+      context: contextSummary || undefined
+    });
+    return fallbackResult;
+  } catch (fallbackErr) {
+    console.error('[AI] Fallback model failed:', fallbackErr?.message || fallbackErr);
   }
 
   // Ultimate safety net
