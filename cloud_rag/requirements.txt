@@ -3,3 +3,4 @@ qdrant-client
 llama-cpp-python
 gradio
 numpy
+requests

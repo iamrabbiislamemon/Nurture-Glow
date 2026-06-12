@@ -1,6 +1,7 @@
 import os
 import json
 import numpy as np
+import requests
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from llama_cpp import Llama
@@ -91,6 +92,37 @@ def answer_question(query):
     if not retrieved:
         return "No relevant information found.", []
     prompt = format_prompt(query, retrieved)
+
+    # Check if NVIDIA / OpenAI API is configured for cloud inference
+    api_key = os.environ.get("OPENAI_API_KEY")
+    base_url = os.environ.get("OPENAI_BASE_URL", "https://integrate.api.nvidia.com/v1")
+    model = os.environ.get("OPENAI_MODEL", "minimaxai/minimax-m2.7")
+
+    if api_key:
+        print(f"Generating answer via cloud LLM ({model}) using NVIDIA API...")
+        try:
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.2,
+                "max_tokens": 512,
+                "stream": False
+            }
+            res = requests.post(f"{base_url.rstrip('/')}/chat/completions", headers=headers, json=payload, timeout=30)
+            if res.ok:
+                data = res.json()
+                answer = data["choices"][0]["message"]["content"].strip()
+                return answer, retrieved
+            else:
+                print(f"NVIDIA API request failed with status {res.status_code}: {res.text}. Falling back to local LLM.")
+        except Exception as e:
+            print(f"Failed to query cloud LLM: {e}. Falling back to local LLM.")
+
+    # Fallback to local LLM
     llm = get_llm()
     response = llm(
         prompt,
