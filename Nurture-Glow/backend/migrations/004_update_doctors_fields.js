@@ -4,16 +4,24 @@
  */
 export default {
   async up(query) {
-    await query(`
-      ALTER TABLE doctors 
-      ADD COLUMN name VARCHAR(255) NULL,
-      ADD COLUMN specialization VARCHAR(255) NULL,
-      ADD COLUMN hospital VARCHAR(255) NULL,
-      ADD COLUMN location VARCHAR(255) NULL,
-      ADD COLUMN experience_years INT NULL,
-      ADD COLUMN available_time VARCHAR(255) NULL,
-      ADD COLUMN contact_number VARCHAR(20) NULL
-    `);
+    try {
+      await query(`
+        ALTER TABLE doctors 
+        ADD COLUMN name VARCHAR(255) NULL,
+        ADD COLUMN specialization VARCHAR(255) NULL,
+        ADD COLUMN hospital VARCHAR(255) NULL,
+        ADD COLUMN location VARCHAR(255) NULL,
+        ADD COLUMN experience_years INT NULL,
+        ADD COLUMN available_time VARCHAR(255) NULL,
+        ADD COLUMN contact_number VARCHAR(20) NULL
+      `);
+    } catch (err) {
+      if (err.code === 'ER_DUP_FIELDNAME' || err.errno === 1060) {
+        console.log("Columns already exist in 'doctors', skipping ADD COLUMN.");
+      } else {
+        throw err;
+      }
+    }
 
     // Backfill existing data
     await query(`
@@ -31,15 +39,23 @@ export default {
   },
 
   async down(query) {
-    await query(`
-      ALTER TABLE doctors 
-      DROP COLUMN name,
-      DROP COLUMN specialization,
-      DROP COLUMN hospital,
-      DROP COLUMN location,
-      DROP COLUMN experience_years,
-      DROP COLUMN available_time,
-      DROP COLUMN contact_number
-    `);
+    try {
+      await query(`
+        ALTER TABLE doctors 
+        DROP COLUMN name,
+        DROP COLUMN specialization,
+        DROP COLUMN hospital,
+        DROP COLUMN location,
+        DROP COLUMN experience_years,
+        DROP COLUMN available_time,
+        DROP COLUMN contact_number
+      `);
+    } catch (err) {
+      if (err.code === 'ER_CANT_DROP_FIELD_OR_KEY' || err.errno === 1091) {
+        console.log("Columns do not exist in 'doctors', skipping drop.");
+      } else {
+        throw err;
+      }
+    }
   }
 };
