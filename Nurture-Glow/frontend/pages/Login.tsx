@@ -230,11 +230,7 @@ const Login: React.FC = () => {
 
     setAppealSending(true);
     try {
-<<<<<<< HEAD
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com'}/auth/suspension-appeal`, {
-=======
       const response = await fetch(`${API_BASE}/auth/suspension-appeal`, {
->>>>>>> upstream/main
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ appealToken, message: appealMessage.trim(), identifier: safeIdentifier })
@@ -267,11 +263,7 @@ const Login: React.FC = () => {
 
     try {
       // Call backend API for password reset
-<<<<<<< HEAD
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com'}/api/auth/forgot-password`, {
-=======
       const response = await fetch(`${API_BASE}/api/auth/forgot-password`, {
->>>>>>> upstream/main
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: sanitizeInput(forgotEmail.trim()) })

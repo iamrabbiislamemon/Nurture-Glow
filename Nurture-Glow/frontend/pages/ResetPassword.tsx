@@ -72,11 +72,7 @@ const ResetPassword: React.FC = () => {
     setIsLoading(true);
 
     try {
-<<<<<<< HEAD
-      const response = await fetch('https://nurture-glow-4.onrender.com/api/auth/reset-password', {
-=======
       const response = await fetch(`${API_BASE}/api/auth/reset-password`, {
->>>>>>> upstream/main
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword: password }),

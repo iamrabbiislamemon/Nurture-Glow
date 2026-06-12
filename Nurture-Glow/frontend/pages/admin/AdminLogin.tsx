@@ -41,10 +41,7 @@ const AdminLogin: React.FC = () => {
       
       // Note: Since login updates the user in context but doesn't return it,
       // we need to make the API call ourselves to get the user data for verification
-<<<<<<< HEAD
-      const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || 'https://nurture-glow-4.onrender.com';
-=======
->>>>>>> upstream/main
+
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

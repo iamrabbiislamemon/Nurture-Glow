@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const API_BASE = import.meta.env.VITE_API_URL || 'https://nurture-glow-4.onrender.com';
-=======
 import { API_BASE } from '../constants';
->>>>>>> upstream/main
 const PHP_API_BASE = import.meta.env.VITE_PHP_API_URL || API_BASE;
 
 
