@@ -50,11 +50,18 @@ const buildContextSummary = (userData, riskResult) => {
   const parts = [];
   const week = userData.week ?? userData.pregnancyWeek;
   if (week) parts.push(`Pregnancy week: ${week}`);
+  
   const bp = userData.blood_pressure || userData.bp;
-  if (bp) parts.push(`Blood pressure: ${bp}`);
-  if (userData.bp_systolic && userData.bp_diastolic) {
-    parts.push(`Blood pressure (numeric): ${userData.bp_systolic}/${userData.bp_diastolic}`);
+  if (bp) {
+    parts.push(`Blood pressure: ${bp}`);
+  } else if (userData.bp_systolic && userData.bp_diastolic) {
+    parts.push(`Blood pressure: ${userData.bp_systolic}/${userData.bp_diastolic}`);
   }
+  
+  if (userData.glucose_level) {
+    parts.push(`Blood glucose: ${userData.glucose_level} mg/dL`);
+  }
+  
   if (userData.weight) parts.push(`Weight: ${userData.weight} kg`);
   if (userData.bmi) parts.push(`BMI: ${userData.bmi}`);
   if (userData.age) parts.push(`Age: ${userData.age}`);
