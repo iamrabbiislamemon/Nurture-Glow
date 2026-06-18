@@ -33,6 +33,15 @@ const intentMatchers = {
     /\bsymptom\b/, /\bpain\b/, /\bfever\b/, /\bbleed\b/, /\bcramp\b/, /\bheadache\b/, /\bnausea\b/,
     /\bdizzy\b/, /\bshortness\b/, /\bpreeclampsia\b/, /\bgestational\b/, /\bdiabetes\b/, /\binfection\b/,
     /\bvaccine\b/, /\bmedication\b/, /\bmedicine\b/, /\btablet\b/
+  ],
+  doctor: [
+    /\bdoctor\b/i, /\bspecialist\b/i, /\bgynecologist\b/i, /\bgynacologist\b/i, /\bgynae\b/i,
+    /\bpediatrician\b/i, /\bpediatric\b/i, /\bpaediatrician\b/i, /\bpaediatric\b/i,
+    /\bnutritionist\b/i, /\bpharmacist\b/i, /\bconsult\b/i, /\brecommend\b/i, /\bphysician\b/i
+  ],
+  appointment: [
+    /\bappointment\b/i, /\bschedule\b/i, /\bslot\b/i, /\bslots\b/i, /\bbook\b/i,
+    /\bavailable\b/i, /\bavailability\b/i
   ]
 };
 
@@ -41,11 +50,18 @@ const buildContextSummary = (userData, riskResult) => {
   const parts = [];
   const week = userData.week ?? userData.pregnancyWeek;
   if (week) parts.push(`Pregnancy week: ${week}`);
+  
   const bp = userData.blood_pressure || userData.bp;
-  if (bp) parts.push(`Blood pressure: ${bp}`);
-  if (userData.bp_systolic && userData.bp_diastolic) {
-    parts.push(`Blood pressure (numeric): ${userData.bp_systolic}/${userData.bp_diastolic}`);
+  if (bp) {
+    parts.push(`Blood pressure: ${bp}`);
+  } else if (userData.bp_systolic && userData.bp_diastolic) {
+    parts.push(`Blood pressure: ${userData.bp_systolic}/${userData.bp_diastolic}`);
   }
+  
+  if (userData.glucose_level) {
+    parts.push(`Blood glucose: ${userData.glucose_level} mg/dL`);
+  }
+  
   if (userData.weight) parts.push(`Weight: ${userData.weight} kg`);
   if (userData.bmi) parts.push(`BMI: ${userData.bmi}`);
   if (userData.age) parts.push(`Age: ${userData.age}`);
@@ -157,31 +173,44 @@ export async function routeMessage({
   }
 
   // ---------- PRIMARY MODEL: MCP + OpenAI Assistant ----------
+  const apiKey = process.env.OPENAI_API_KEY;
+  const isInvalidKey = !apiKey || apiKey.startsWith('eyJ');
+
+  if (!isInvalidKey) {
+    try {
+      const mcpResult = await runMcpAssistant({
+        message,
+        locale: fallbackLocale,
+        context: contextSummary || undefined,
+        timeoutMs
+      });
+      if (mcpResult?.text) {
+        return {
+          text: mcpResult.text,
+          modelUsed: mcpResult.modelUsed || 'gpt4-mcp',
+          intent,
+          sources: [],
+          riskLevel: mcpResult.riskLevel
+        };
+      }
+    } catch (mcpErr) {
+      console.error('[AI] MCP Assistant failed, falling back to offline model:', mcpErr?.message || mcpErr);
+    }
+  } else {
+    console.warn('[AI] OPENAI_API_KEY is not configured or is invalid (JWT token). Skipping MCP assistant.');
+  }
+
+  // ---------- FALLBACK MODEL: Offline Knowledge Base ----------
   try {
-    const mcpResult = await runMcpAssistant({
+    const fallbackResult = await runFallback({
       message,
       locale: fallbackLocale,
-      context: contextSummary || undefined,
-      timeoutMs
-    });
-    if (mcpResult?.text) {
-      return {
-        text: mcpResult.text,
-        modelUsed: mcpResult.modelUsed || 'gpt4-mcp',
-        intent,
-        sources: [],
-        riskLevel: mcpResult.riskLevel
-      };
-    }
-  } catch (mcpErr) {
-    console.error('[AI] MCP Assistant failed:', mcpErr?.message || mcpErr);
-    return {
-      text: `Error from MCP Server: ${mcpErr?.message || 'Unknown error'}`,
-      modelUsed: 'mcp-error',
       intent,
-      sources: [],
-      riskLevel: undefined
-    };
+      context: contextSummary || undefined
+    });
+    return fallbackResult;
+  } catch (fallbackErr) {
+    console.error('[AI] Fallback model failed:', fallbackErr?.message || fallbackErr);
   }
 
   // Ultimate safety net

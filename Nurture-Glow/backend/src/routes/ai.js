@@ -76,8 +76,8 @@ export function createAiRouter({ requireAuth }) {
       }
 
       const apiKey = process.env.OPENAI_API_KEY;
-      if (!apiKey) {
-        return res.status(500).json({ error: 'Transcription service not configured' });
+      if (!apiKey || apiKey.startsWith('eyJ')) {
+        return res.status(500).json({ error: 'Transcription service not configured or has an invalid key' });
       }
 
       // Convert base64 audio to Buffer

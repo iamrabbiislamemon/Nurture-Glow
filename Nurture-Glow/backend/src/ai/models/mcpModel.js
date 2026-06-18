@@ -85,6 +85,9 @@ export async function runMcpAssistant({ message, locale = 'en', context, timeout
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY is not configured');
   }
+  if (apiKey.startsWith('eyJ')) {
+    throw new Error('OPENAI_API_KEY is invalid (JWT token detected)');
+  }
 
   const isGemini = apiKey.startsWith('AQ.') || apiKey.startsWith('AIza');
   
